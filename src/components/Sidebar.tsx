@@ -2,6 +2,7 @@
 
 import {
   Bookmark,
+  Briefcase,
   ExternalLinkIcon,
   FileCode,
   Gamepad2,
@@ -76,6 +77,15 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
     {
       label: "Me",
       items: [
+        {
+          href: "/work",
+          label: "Work",
+          icon: Briefcase,
+          trailingAccesory: null,
+          isActive: pathname.indexOf("/work") >= 0,
+          trailingAction: null,
+          isExternal: false,
+        },
         {
           href: "/bookmarks",
           label: "Bookmarks",
