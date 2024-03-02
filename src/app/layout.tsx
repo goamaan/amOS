@@ -5,6 +5,10 @@ import { cn } from "~/lib/utils"
 
 import { TRPCReactProvider } from "~/trpc/react"
 import { Toaster } from "~/components/ui/sonner"
+import { ThemeProvider } from "~/components/providers/theme-provider"
+import { Sidebar } from "~/components/Sidebar"
+import { getServerAuthSession } from "~/server/auth"
+import { GlobalNavigationProvider } from "~/components/providers/navigation-provider"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,9 +33,10 @@ export function ListDetailView({ list, detail, hasDetail = false }: Props) {
       {list && (
         <div
           id="list"
-          className={`bg-dots ${
-            hasDetail ? "hidden lg:flex" : "min-h-screen w-full"
-          }`}
+          className={cn(
+            "bg-background",
+            hasDetail ? "hidden lg:flex" : "min-h-screen w-full",
+          )}
         >
           {list}
         </div>
@@ -41,10 +46,12 @@ export function ListDetailView({ list, detail, hasDetail = false }: Props) {
   )
 }
 
-export function SiteLayout({ children }: { children: React.ReactElement }) {
+export async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerAuthSession()
+
   return (
     <div className="relative flex h-full min-h-screen w-full">
-      {/* <Sidebar /> */}
+      <Sidebar isAdmin={session?.user.isAdmin ?? false} />
 
       <div className="flex flex-1">{children}</div>
     </div>
@@ -60,22 +67,31 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "bg-background min-h-screen font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased",
           inter.variable,
         )}
       >
         <TRPCReactProvider>
-          {children}
-          <Toaster
-            visibleToasts={3}
-            toastOptions={{
-              style: { paddingRight: "20px", paddingLeft: "20px" },
-            }}
-            richColors={true}
-            duration={3000}
-            closeButton={true}
-            position="top-center"
-          />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <GlobalNavigationProvider>
+              <SiteLayout>{children}</SiteLayout>
+              <Toaster
+                visibleToasts={3}
+                toastOptions={{
+                  style: { paddingRight: "20px", paddingLeft: "20px" },
+                }}
+                richColors={true}
+                duration={3000}
+                closeButton={true}
+                position="top-center"
+              />
+            </GlobalNavigationProvider>
+          </ThemeProvider>
         </TRPCReactProvider>
       </body>
     </html>
