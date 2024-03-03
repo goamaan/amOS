@@ -19,9 +19,10 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useRef, type MutableRefObject } from "react"
+import { ThemeToggle } from "~/components/ThemeToggle"
 import { TitleBar } from "~/components/TitleBar"
 import { useGlobalNavigation } from "~/components/providers/navigation-provider"
+import { Button } from "~/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog"
+import { cn } from "~/lib/utils"
 
 function AddBookmarkDialog() {
   return (
@@ -49,7 +51,6 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
   const { isOpen, setIsOpen } = useGlobalNavigation()
   const pathname = usePathname()
 
-  const scrollContainerRef = useRef<HTMLDivElement>()
   const sections = [
     {
       label: null,
@@ -196,76 +197,72 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
   return (
     <>
       <nav
-        ref={scrollContainerRef as MutableRefObject<HTMLDivElement>}
-        className={`${
+        className={cn(
+          "3xl:w-80 z-30 flex h-full max-h-screen min-h-screen w-3/4 transform flex-col overflow-y-auto border-r bg-card transition duration-200 ease-in-out sm:w-1/2 sm:pb-0 md:w-1/3 lg:relative lg:z-auto lg:w-56 lg:translate-x-0 2xl:w-72",
           isOpen
             ? "absolute inset-y-0 left-0 translate-x-0 shadow-lg"
-            : "absolute -translate-x-full"
-        } 3xl:w-80 border-gray-150 z-30 flex h-full max-h-screen min-h-screen w-3/4 flex-none transform flex-col overflow-y-auto border-r bg-white pb-10 transition duration-200 ease-in-out dark:border-gray-800 dark:bg-gray-900 sm:w-1/2 sm:pb-0 md:w-1/3 lg:relative lg:z-auto lg:w-56 lg:translate-x-0 lg:bg-gray-50 lg:dark:bg-gray-900 2xl:w-72`}
+            : "absolute -translate-x-full",
+        )}
       >
-        <TitleBar
-          scrollContainerRef={
-            scrollContainerRef as MutableRefObject<HTMLDivElement>
-          }
-          leadingAccessory={null}
-          title="Amaan Gokak"
-        />
-        <div className="flex-1 space-y-1 px-3 py-3">
+        <TitleBar title="Amaan Gokak" trailingAccessory={<ThemeToggle />} />
+        <div className="flex flex-col gap-2 space-y-1 px-2">
           {sections.map((section, i) => {
             return (
-              <ul key={i} className="space-y-1">
+              <ul key={i} className="space-y-2 py-2">
                 {section.label && (
-                  <h4
-                    key={i}
-                    className="text-gray-1000 px-2 pb-2 pt-5 text-xs font-semibold text-opacity-40 dark:text-white"
-                  >
+                  <h4 key={i} className="px-3 text-xs font-bold">
                     {section.label}
                   </h4>
                 )}
-                {section.items.map(
-                  ({
-                    href,
-                    icon: Icon,
-                    isActive,
-                    isExternal,
-                    label,
-                    trailingAccessory: Accessory,
-                    trailingAction: Action,
-                  }) => (
-                    <li
-                      className="flex items-stretch space-x-1"
-                      onClick={() => setIsOpen(false)}
-                      key={href}
-                    >
-                      <Link
-                        href={href}
-                        target={isExternal ? "_blank" : undefined}
-                        rel={isExternal ? "noopener noreferrer" : undefined}
-                        className={`flex flex-1 items-center space-x-3 rounded-md px-2 py-1.5 text-sm font-medium  ${
-                          isActive
-                            ? "bg-black text-white hover:bg-black hover:text-white dark:bg-gray-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white"
-                            : "text-gray-700 dark:text-gray-200 sm:hover:bg-gray-200 sm:hover:text-gray-900 sm:dark:hover:bg-gray-700 sm:dark:hover:text-gray-200"
-                        }`}
+                <div className="flex flex-col gap-2">
+                  {section.items.map(
+                    ({
+                      href,
+                      icon: Icon,
+                      isExternal,
+                      label,
+                      trailingAccessory: Accessory,
+                      trailingAction: Action,
+                      isActive,
+                    }) => (
+                      <li
+                        className="flex space-x-1"
+                        onClick={() => setIsOpen(false)}
+                        key={href}
                       >
-                        <span className="flex w-4 items-center justify-center">
-                          <Icon />
-                        </span>
-                        <span className="flex-1">{label}</span>
-                        {Accessory && (
-                          <span className="flex w-4 items-center justify-center text-black text-opacity-40 dark:text-white">
-                            <Accessory />
-                          </span>
-                        )}
-                      </Link>
-                      {Action && <Action />}
-                    </li>
-                  ),
-                )}
+                        <Link
+                          href={href}
+                          className="w-full"
+                          target={isExternal ? "_blank" : undefined}
+                          rel={isExternal ? "noopener noreferrer" : undefined}
+                        >
+                          <Button
+                            variant={isActive ? "secondary" : "ghost"}
+                            className="flex w-full justify-between gap-2"
+                            size={"sm"}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="flex w-4 items-center justify-center">
+                                <Icon />
+                              </span>
+                              {label}
+                            </div>
+                            {Accessory && (
+                              <span className="flex w-4 items-center justify-center text-black text-opacity-40 dark:text-white">
+                                <Accessory />
+                              </span>
+                            )}
+                          </Button>
+                        </Link>
+                        {Action && <Action />}
+                      </li>
+                    ),
+                  )}
+                </div>
               </ul>
             )
           })}
         </div>
-        {/* <UserFooter /> */}
       </nav>
 
       <div

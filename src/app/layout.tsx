@@ -72,12 +72,7 @@ export default function RootLayout({
         )}
       >
         <TRPCReactProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <GlobalNavigationProvider>
               <SiteLayout>{children}</SiteLayout>
               <Toaster
