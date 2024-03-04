@@ -1,3 +1,5 @@
+"use client"
+
 import { withProps } from "@udecode/cn"
 import { createAlignPlugin } from "@udecode/plate-alignment"
 import { createAutoformatPlugin } from "@udecode/plate-autoformat"
@@ -335,7 +337,7 @@ const plugins = createPlugins(
   },
 )
 
-export function PlateEditor({}) {
+export function TextEditor({}) {
   return (
     <DndProvider backend={HTML5Backend}>
       <Plate

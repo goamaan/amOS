@@ -8,6 +8,7 @@ import { Toaster } from "~/components/ui/sonner"
 import { ThemeProvider } from "~/components/providers/theme-provider"
 import { Sidebar } from "~/components/Sidebar"
 import { getServerAuthSession } from "~/server/auth"
+import { TooltipProvider } from "~/components/plate-ui/tooltip"
 import { GlobalNavigationProvider } from "~/components/providers/navigation-provider"
 
 const inter = Inter({
@@ -73,19 +74,25 @@ export default function RootLayout({
       >
         <TRPCReactProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <GlobalNavigationProvider>
-              <SiteLayout>{children}</SiteLayout>
-              <Toaster
-                visibleToasts={3}
-                toastOptions={{
-                  style: { paddingRight: "20px", paddingLeft: "20px" },
-                }}
-                richColors={true}
-                duration={3000}
-                closeButton={true}
-                position="top-center"
-              />
-            </GlobalNavigationProvider>
+            <TooltipProvider
+              disableHoverableContent
+              delayDuration={500}
+              skipDelayDuration={0}
+            >
+              <GlobalNavigationProvider>
+                <SiteLayout>{children}</SiteLayout>
+                <Toaster
+                  visibleToasts={3}
+                  toastOptions={{
+                    style: { paddingRight: "20px", paddingLeft: "20px" },
+                  }}
+                  richColors={true}
+                  duration={3000}
+                  closeButton={true}
+                  position="top-center"
+                />
+              </GlobalNavigationProvider>
+            </TooltipProvider>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

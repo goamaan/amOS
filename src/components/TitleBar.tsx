@@ -11,12 +11,14 @@ interface Props {
   globalMenu?: boolean
   backButtonHref?: string
   children?: React.ReactNode
+  hasBgColor?: boolean
   trailingAccessory?: React.ReactNode
 }
 
 export function TitleBar({
   title,
   globalMenu = true,
+  hasBgColor = true,
   backButtonHref,
   trailingAccessory = null,
   children,
@@ -27,8 +29,9 @@ export function TitleBar({
     <>
       <div
         className={cn(
-          "min-h-12",
-          `filter-blur sticky top-0 z-10 flex flex-col justify-center px-3 py-2`,
+          "h-12",
+          hasBgColor && "bg-secondary/40",
+          `sticky top-0 z-10 flex flex-col justify-center px-3 py-2 backdrop-blur-lg`,
         )}
       >
         <div className="flex flex-none items-center justify-between">
@@ -53,7 +56,7 @@ export function TitleBar({
                 <ArrowLeft size={16} className="text-primary" />
               </Link>
             )}
-            <h2 className="line-clamp-1 transform-gpu text-sm text-primary dark:text-primary-foreground">
+            <h2 className="line-clamp-1 transform-gpu text-sm font-semibold text-primary dark:text-primary-foreground">
               {title}
             </h2>
           </span>

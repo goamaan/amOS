@@ -58,7 +58,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "/",
           label: "Home",
-          icon: Home,
+          icon: <Home />,
           trailingAccessory: null,
           isActive: pathname === "/",
           trailingAction: null,
@@ -67,7 +67,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "/writing",
           label: "Writing",
-          icon: NotebookPen,
+          icon: <NotebookPen />,
           trailingAccessory: null,
           isActive: pathname.indexOf("/writing") >= 0,
           trailingAction: null,
@@ -81,7 +81,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "/work",
           label: "Work",
-          icon: Briefcase,
+          icon: <Briefcase />,
           trailingAccesory: null,
           isActive: pathname.indexOf("/work") >= 0,
           trailingAction: null,
@@ -90,7 +90,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "/bookmarks",
           label: "Bookmarks",
-          icon: Bookmark,
+          icon: <Bookmark />,
           trailingAccessory: null,
           isActive: pathname.indexOf("/bookmarks") >= 0,
           trailingAction: isAdmin ? AddBookmarkDialog : null,
@@ -100,7 +100,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "/ama",
           label: "AMA",
-          icon: MessagesSquare,
+          icon: <MessagesSquare />,
           trailingAccessory: null,
           isActive:
             pathname.indexOf("/ama") >= 0 &&
@@ -111,7 +111,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "/stack",
           label: "Stack",
-          icon: Layers,
+          icon: <Layers />,
           trailingAccessory: null,
           isActive: pathname.indexOf("/stack") >= 0,
           trailingAction: null,
@@ -125,7 +125,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "https://gistlab.dev",
           label: "GistLab",
-          icon: FileCode,
+          icon: <FileCode />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
           trailingAction: null,
@@ -134,7 +134,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "https://astar-visualization.netlify.app/",
           label: "A* Pathfinding",
-          icon: Waypoints,
+          icon: <Waypoints />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
           trailingAction: null,
@@ -143,7 +143,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "https://github.com/goamaan/tsalgo",
           label: "TSAlgo",
-          icon: Puzzle,
+          icon: <Puzzle />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
           trailingAction: null,
@@ -152,7 +152,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "https://github.com/goamaan/Titans-Trial",
           label: "Titan's Trial",
-          icon: Gamepad2,
+          icon: <Gamepad2 />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
           trailingAction: null,
@@ -166,7 +166,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "https://twitter.com/goamaan",
           label: "Twitter",
-          icon: Twitter,
+          icon: <Twitter />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
           trailingAction: null,
@@ -175,7 +175,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "https://github.com/goamaan",
           label: "GitHub",
-          icon: Github,
+          icon: <Github />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
           trailingAction: null,
@@ -184,7 +184,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         {
           href: "mailto:amaangokak18@gmail.com",
           label: "Mail",
-          icon: Mail,
+          icon: <Mail />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
           trailingAction: null,
@@ -204,7 +204,11 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
             : "absolute -translate-x-full",
         )}
       >
-        <TitleBar title="Amaan Gokak" trailingAccessory={<ThemeToggle />} />
+        <TitleBar
+          hasBgColor={false}
+          title="Amaan Gokak"
+          trailingAccessory={<ThemeToggle />}
+        />
         <div className="flex flex-col gap-2 space-y-1 px-2">
           {sections.map((section, i) => {
             return (
@@ -243,7 +247,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
                           >
                             <div className="flex items-center gap-2">
                               <span className="flex w-4 items-center justify-center">
-                                <Icon />
+                                {Icon}
                               </span>
                               {label}
                             </div>
