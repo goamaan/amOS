@@ -56,7 +56,7 @@ export function TitleBar({
                 <ArrowLeft size={16} className="text-primary" />
               </Link>
             )}
-            <h2 className="line-clamp-1 transform-gpu text-sm font-semibold text-primary dark:text-primary-foreground">
+            <h2 className="line-clamp-1 transform-gpu text-sm font-semibold text-primary">
               {title}
             </h2>
           </span>

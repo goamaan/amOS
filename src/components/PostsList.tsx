@@ -1,65 +1,63 @@
+import { Plus } from "lucide-react"
+import Link from "next/link"
 import { ListContainer } from "~/components/ListContainer"
 import { TitleBar } from "~/components/TitleBar"
+import { AddPostForm } from "~/components/forms/AddPost"
 import { Button } from "~/components/ui/button"
-interface Post {
-  id: number
-  title: string
-  date: Date
-}
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog"
+import { getServerAuthSession } from "~/server/auth"
+import { api } from "~/trpc/server"
 
-function generateFakePosts(count: number): Post[] {
-  const posts: Post[] = []
-  const titles = [
-    "Lorem Ipsum",
-    "Dolor Sit Amet",
-    "Consectetur Adipiscing Elit",
-    "Sed Do Eiusmod Tempor",
-    "Incididunt Ut Labore Et Dolore",
-    "Magna Aliqua Ut Enim Ad Minim",
-    "Veniam, Quis Nostrud Exercitation",
-    "Ullamco Laboris Nisi Ut Aliquip",
-    "Ex Ea Commodo Consequat",
-    "Duis Aute Irure Dolor",
-  ]
-
-  for (let i = 0; i < count; i++) {
-    const randomTitleIndex = Math.floor(Math.random() * titles.length)
-    const post: Post = {
-      id: i + 1,
-      title: titles[randomTitleIndex]!,
-      date: randomDate(new Date(2023, 0, 1), new Date()),
-    }
-    posts.push(post)
-  }
-
-  return posts
-}
-
-function randomDate(start: Date, end: Date): Date {
-  return new Date(
-    start.getTime() + Math.random() * (end.getTime() - start.getTime()),
+function AddPostDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger>
+        <Plus size={16} />
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add new post</DialogTitle>
+        </DialogHeader>
+        <AddPostForm />
+      </DialogContent>
+    </Dialog>
   )
 }
 
-const fakePosts = generateFakePosts(50)
+export async function PostsList({ params }: { params: { slug: string } }) {
+  const session = await getServerAuthSession()
+  const posts = await api.post.getAll.query()
 
-export function PostsList() {
   return (
     <ListContainer>
-      <TitleBar hasBgColor title="Writing" />
+      <TitleBar
+        hasBgColor
+        title="Writing"
+        trailingAccessory={session?.user.isAdmin ? <AddPostDialog /> : null}
+      />
       <div className="flex flex-col items-start gap-2 p-2 text-start">
-        {fakePosts.map((p) => (
-          <Button
-            variant={"ghost"}
-            className="flex w-full flex-col items-start py-7"
-            key={p.id}
-          >
-            <p className="">{p.title}</p>
-            <p className="justify-start text-sm text-muted-foreground">
-              {p.date.toDateString()}
-            </p>
-          </Button>
-        ))}
+        {posts.map((p) => {
+          const active = params.slug === p.slug
+          return (
+            <Link key={p.id} href={`/writing/${p.slug}`} className="w-full">
+              <Button
+                variant={active ? "secondary" : "ghost"}
+                className="flex w-full flex-col items-start py-7"
+              >
+                <p className="">{p.title}</p>
+                <p className="justify-start text-sm text-muted-foreground">
+                  {p.publishedAt?.toDateString() ?? p.updatedAt.toDateString()}
+                </p>
+              </Button>
+            </Link>
+          )
+        })}
       </div>
     </ListContainer>
   )

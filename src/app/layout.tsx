@@ -52,7 +52,7 @@ export async function SiteLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="relative flex h-full min-h-screen w-full">
-      <Sidebar isAdmin={session?.user.isAdmin ?? false} />
+      <Sidebar user={session?.user} />
 
       <div className="flex flex-1">{children}</div>
     </div>

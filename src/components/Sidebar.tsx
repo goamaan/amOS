@@ -17,11 +17,16 @@ import {
   Twitter,
   Waypoints,
 } from "lucide-react"
+import { type Session } from "next-auth"
+import { signOut } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { SignInDialog } from "~/components/SignInDialog"
 import { ThemeToggle } from "~/components/ThemeToggle"
 import { TitleBar } from "~/components/TitleBar"
+import { Avatar, AvatarImage } from "~/components/plate-ui/avatar"
 import { useGlobalNavigation } from "~/components/providers/navigation-provider"
+import { AvatarFallback } from "~/components/ui/avatar"
 import { Button } from "~/components/ui/button"
 import {
   Dialog,
@@ -30,6 +35,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu"
 import { cn } from "~/lib/utils"
 
 function AddBookmarkDialog() {
@@ -47,7 +58,7 @@ function AddBookmarkDialog() {
   )
 }
 
-export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
+export function Sidebar({ user }: { user?: Session["user"] }) {
   const { isOpen, setIsOpen } = useGlobalNavigation()
   const pathname = usePathname()
 
@@ -93,7 +104,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
           icon: <Bookmark />,
           trailingAccessory: null,
           isActive: pathname.indexOf("/bookmarks") >= 0,
-          trailingAction: isAdmin ? AddBookmarkDialog : null,
+          trailingAction: user?.isAdmin ? AddBookmarkDialog : null,
           isExternal: false,
         },
 
@@ -204,71 +215,109 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
             : "absolute -translate-x-full",
         )}
       >
-        <TitleBar
-          hasBgColor={false}
-          title="Amaan Gokak"
-          trailingAccessory={<ThemeToggle />}
-        />
-        <div className="flex flex-col gap-2 space-y-1 px-2">
-          {sections.map((section, i) => {
-            return (
-              <ul key={i} className="space-y-2 py-2">
-                {section.label && (
-                  <h4 key={i} className="px-3 text-xs font-bold">
-                    {section.label}
-                  </h4>
-                )}
-                <div className="flex flex-col gap-2">
-                  {section.items.map(
-                    ({
-                      href,
-                      icon: Icon,
-                      isExternal,
-                      label,
-                      trailingAccessory: Accessory,
-                      trailingAction: Action,
-                      isActive,
-                    }) => (
-                      <li
-                        className="flex space-x-1"
-                        onClick={() => setIsOpen(false)}
-                        key={href}
-                      >
-                        <Link
-                          href={href}
-                          className="w-full"
-                          target={isExternal ? "_blank" : undefined}
-                          rel={isExternal ? "noopener noreferrer" : undefined}
-                        >
-                          <Button
-                            variant={isActive ? "secondary" : "ghost"}
-                            className="flex w-full justify-between gap-2"
-                            size={"sm"}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="flex w-4 items-center justify-center">
-                                {Icon}
-                              </span>
-                              {label}
-                            </div>
-                            {Accessory && (
-                              <span className="flex w-4 items-center justify-center text-black text-opacity-40 dark:text-white">
-                                <Accessory />
-                              </span>
-                            )}
-                          </Button>
-                        </Link>
-                        {Action && <Action />}
-                      </li>
-                    ),
-                  )}
+        <div className="flex h-screen flex-col justify-between">
+          <div className="flex flex-col">
+            <TitleBar
+              hasBgColor={false}
+              title="Amaan Gokak"
+              trailingAccessory={
+                <div className="flex gap-1">
+                  <ThemeToggle />
                 </div>
-              </ul>
-            )
-          })}
+              }
+            />
+            <div className="flex flex-col gap-2 space-y-1 px-2">
+              {sections.map((section, i) => {
+                return (
+                  <ul key={i} className="space-y-2 py-2">
+                    {section.label && (
+                      <h4 key={i} className="px-3 text-xs font-bold">
+                        {section.label}
+                      </h4>
+                    )}
+                    <div className="flex flex-col gap-2">
+                      {section.items.map(
+                        ({
+                          href,
+                          icon: Icon,
+                          isExternal,
+                          label,
+                          trailingAccessory: Accessory,
+                          trailingAction: Action,
+                          isActive,
+                        }) => (
+                          <li
+                            className="flex space-x-1"
+                            onClick={() => setIsOpen(false)}
+                            key={href}
+                          >
+                            <Link
+                              href={href}
+                              className="w-full"
+                              target={isExternal ? "_blank" : undefined}
+                              rel={
+                                isExternal ? "noopener noreferrer" : undefined
+                              }
+                            >
+                              <Button
+                                variant={isActive ? "secondary" : "ghost"}
+                                className="flex w-full justify-between gap-2"
+                                size={"sm"}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className="flex w-4 items-center justify-center">
+                                    {Icon}
+                                  </span>
+                                  {label}
+                                </div>
+                                {Accessory && (
+                                  <span className="flex w-4 items-center justify-center text-black text-opacity-40 dark:text-white">
+                                    <Accessory />
+                                  </span>
+                                )}
+                              </Button>
+                            </Link>
+                            {Action && <Action />}
+                          </li>
+                        ),
+                      )}
+                    </div>
+                  </ul>
+                )
+              })}
+            </div>
+          </div>
+          {!user ? <SignInDialog /> : null}
+          {user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <div className="m-2 flex items-center justify-between rounded-md bg-secondary/50 px-3 py-1">
+                  <div className="flex flex-col items-start justify-start gap-0.5">
+                    <p className="text-xs text-muted-foreground">
+                      Logged in as
+                    </p>
+                    <p className="text-sm font-semibold text-muted-foreground">
+                      {user.name}
+                    </p>
+                  </div>
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.image ?? undefined} />
+                    <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link href="/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </nav>
-
       <div
         className={`fixed inset-0 z-20 bg-black bg-opacity-10 transition duration-200 ease-in-out dark:bg-opacity-50 ${
           isOpen
