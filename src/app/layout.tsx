@@ -8,8 +8,8 @@ import { Toaster } from "~/components/ui/sonner"
 import { ThemeProvider } from "~/components/providers/theme-provider"
 import { Sidebar } from "~/components/Sidebar"
 import { getServerAuthSession } from "~/server/auth"
-import { TooltipProvider } from "~/components/plate-ui/tooltip"
 import { GlobalNavigationProvider } from "~/components/providers/navigation-provider"
+import { TooltipProvider } from "~/components/ui/tooltip"
 
 const inter = Inter({
   subsets: ["latin"],

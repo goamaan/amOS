@@ -1,6 +1,6 @@
 import { type Session } from "next-auth"
-import { TextEditor } from "~/components/TextEditor"
 import { TitleBar } from "~/components/TitleBar"
+import { Editor } from "~/components/editor/editor"
 import { api } from "~/trpc/server"
 
 export async function Post({
@@ -16,7 +16,7 @@ export async function Post({
     <div className="relative flex max-h-screen w-full flex-col overflow-y-auto">
       <TitleBar hasBgColor={false} title="" />
 
-      <TextEditor />
+      <Editor />
     </div>
   )
 }

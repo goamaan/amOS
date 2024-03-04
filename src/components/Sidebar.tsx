@@ -24,9 +24,8 @@ import { usePathname } from "next/navigation"
 import { SignInDialog } from "~/components/SignInDialog"
 import { ThemeToggle } from "~/components/ThemeToggle"
 import { TitleBar } from "~/components/TitleBar"
-import { Avatar, AvatarImage } from "~/components/plate-ui/avatar"
 import { useGlobalNavigation } from "~/components/providers/navigation-provider"
-import { AvatarFallback } from "~/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import { Button } from "~/components/ui/button"
 import {
   Dialog,
