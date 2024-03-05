@@ -52,14 +52,16 @@ export const Editor = ({
 
   return (
     <div className="relative w-[90%] max-w-screen-md self-center">
-      <div className="z-10 mb-2 w-fit rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
-        {saveStatus}
-      </div>
+      {editable && (
+        <div className="z-10 mb-2 w-fit rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
+          {saveStatus}
+        </div>
+      )}
       <EditorRoot>
         <EditorContent
           initialContent={JSON.parse(content) as JSONContent}
           extensions={extensions}
-          className="relative min-h-96 w-full max-w-screen-lg rounded-md border bg-background p-4"
+          className="relative min-h-96 w-full max-w-screen-lg rounded-md bg-background p-1"
           editorProps={{
             ...defaultEditorProps,
             attributes: {
