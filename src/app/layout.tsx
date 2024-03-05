@@ -10,6 +10,7 @@ import { Sidebar } from "~/components/Sidebar"
 import { getServerAuthSession } from "~/server/auth"
 import { GlobalNavigationProvider } from "~/components/providers/navigation-provider"
 import { TooltipProvider } from "~/components/ui/tooltip"
+import { unstable_noStore } from "next/cache"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -64,6 +65,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  unstable_noStore()
   return (
     <html lang="en">
       <body

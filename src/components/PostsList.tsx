@@ -1,8 +1,10 @@
+import { type Post } from "@prisma/client"
 import { Plus } from "lucide-react"
+import { type Session } from "next-auth"
 import Link from "next/link"
 import { ListContainer } from "~/components/ListContainer"
 import { TitleBar } from "~/components/TitleBar"
-import { AddPostForm } from "~/components/forms/AddPost"
+import { AddPostForm } from "~/components/Post/AddPost"
 import { Button } from "~/components/ui/button"
 import {
   Dialog,
@@ -11,8 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog"
-import { getServerAuthSession } from "~/server/auth"
-import { api } from "~/trpc/server"
 
 function AddPostDialog() {
   return (
@@ -30,16 +30,21 @@ function AddPostDialog() {
   )
 }
 
-export async function PostsList({ params }: { params: { slug: string } }) {
-  const session = await getServerAuthSession()
-  const posts = await api.post.getAll.query()
-
+export async function PostsList({
+  params,
+  user,
+  posts,
+}: {
+  params: { slug: string }
+  user?: Session["user"]
+  posts: Post[]
+}) {
   return (
     <ListContainer>
       <TitleBar
         hasBgColor
         title="Writing"
-        trailingAccessory={session?.user.isAdmin ? <AddPostDialog /> : null}
+        trailingAccessory={user?.isAdmin ? <AddPostDialog /> : null}
       />
       <div className="flex flex-col items-start gap-2 p-2 text-start">
         {posts.map((p) => {

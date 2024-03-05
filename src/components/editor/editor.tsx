@@ -1,32 +1,39 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import { useDebouncedCallback } from "use-debounce"
 import {
-  defaultEditorProps,
-  type EditorInstance,
-  EditorRoot,
   EditorBubble,
   EditorCommand,
-  EditorCommandItem,
   EditorCommandEmpty,
+  EditorCommandItem,
   EditorContent,
+  EditorRoot,
+  defaultEditorProps,
+  type EditorInstance,
   type JSONContent,
 } from "novel"
 import { ImageResizer } from "novel/extensions"
+import { useState } from "react"
+import { useDebouncedCallback } from "use-debounce"
 import { defaultExtensions } from "./extensions"
-import { NodeSelector } from "./selectors/node-selector"
-import { LinkSelector } from "./selectors/link-selector"
 import { ColorSelector } from "./selectors/color-selector"
+import { LinkSelector } from "./selectors/link-selector"
+import { NodeSelector } from "./selectors/node-selector"
 
+import { Separator } from "~/components/ui/separator"
 import { TextButtons } from "./selectors/text-buttons"
 import { slashCommand, suggestionItems } from "./slash-command"
-import { Separator } from "~/components/ui/separator"
 
 const extensions = [...defaultExtensions, slashCommand]
 
-export const Editor = () => {
-  const [initialContent, setInitialContent] = useState<null | JSONContent>(null)
+export const Editor = ({
+  editable = false,
+  content,
+  onContentChange,
+}: {
+  editable?: boolean
+  content: string
+  onContentChange: (content: string) => void
+}) => {
   const [saveStatus, setSaveStatus] = useState("Saved")
 
   const [openNode, setOpenNode] = useState(false)
@@ -37,39 +44,29 @@ export const Editor = () => {
     async (editor: EditorInstance) => {
       const json = editor.getJSON()
 
-      window.localStorage.setItem("novel-content", JSON.stringify(json))
+      onContentChange(JSON.stringify(json))
       setSaveStatus("Saved")
     },
     1000,
   )
 
-  useEffect(() => {
-    const content = window.localStorage.getItem("novel-content")
-    if (content) setInitialContent(JSON.parse(content))
-    else setInitialContent({})
-  }, [])
-
-  if (!initialContent) return null
-
   return (
-    <div className="flex w-full max-w-screen-lg self-center">
-      <div className="absolute right-5 top-5 z-10 mb-5 rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
+    <div className="relative w-[90%] max-w-screen-md self-center">
+      <div className="z-10 mb-2 w-fit rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
         {saveStatus}
       </div>
       <EditorRoot>
         <EditorContent
-          initialContent={initialContent}
+          initialContent={JSON.parse(content) as JSONContent}
           extensions={extensions}
-          // a little less than min-h-screen
-          className="min-h-96 w-full rounded-md border bg-background"
+          className="relative min-h-96 w-full max-w-screen-lg rounded-md border bg-background p-4"
           editorProps={{
             ...defaultEditorProps,
-
             attributes: {
               class: `prose-lg prose-stone dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
             },
           }}
-          editable={false}
+          editable={editable}
           onUpdate={({ editor }) => {
             void debouncedUpdates(editor)
             setSaveStatus("Unsaved")

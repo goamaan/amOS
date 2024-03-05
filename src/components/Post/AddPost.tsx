@@ -46,7 +46,8 @@ export function AddPostForm() {
       },
       onSuccess(data) {
         toast.success("Post created")
-        router.push(`writing/${data.slug}`)
+        router.refresh()
+        router.push(`/writing/${data.slug}`)
       },
     })
   }
