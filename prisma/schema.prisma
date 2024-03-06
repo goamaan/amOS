@@ -56,7 +56,6 @@ model User {
     reactions Reaction[]
     posts     Post[]
     stacks    Stack[]
-    work      Work[]
 }
 
 model Bookmark {
@@ -111,30 +110,12 @@ model Comment {
     questionId String?
     postId     String?
     stackId    String?
-    work       Work?     @relation(fields: [workId], references: [id])
     workId     String?
 
     @@index([bookmarkId])
     @@index([questionId])
     @@index([postId])
     @@index([stackId])
-}
-
-model Work {
-    id           String     @id @default(cuid())
-    createdAt    DateTime   @default(now())
-    updatedAt    DateTime   @updatedAt
-    publishedAt  DateTime?
-    author       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-    slug         String     @unique
-    title        String
-    description  String
-    featureImage String?
-    comments     Comment[]
-    reactions    Reaction[]
-    userId       String
-
-    @@index([publishedAt])
 }
 
 model Post {
@@ -146,7 +127,8 @@ model Post {
     author       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     slug         String     @unique
     title        String
-    description  String
+    content      String     @default("")
+    type         String     @default("writing")
     featureImage String?
     comments     Comment[]
     reactions    Reaction[]
@@ -195,15 +177,12 @@ model Reaction {
     questionId String?
     postId     String?
     stackId    String?
-    work       Work?     @relation(fields: [workId], references: [id])
-    workId     String?
 
     @@index([commentId])
     @@index([bookmarkId])
     @@index([questionId])
     @@index([postId])
     @@index([stackId])
-    @@index([workId])
 }
 
 model VerificationToken {

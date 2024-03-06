@@ -1,4 +1,42 @@
 -- CreateTable
+CREATE TABLE "Account" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "userId" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "provider" TEXT NOT NULL,
+    "providerAccountId" TEXT NOT NULL,
+    "refresh_token" TEXT,
+    "access_token" TEXT,
+    "refresh_token_expires_in" INTEGER,
+    "expires_at" INTEGER,
+    "token_type" TEXT,
+    "scope" TEXT,
+    "id_token" TEXT,
+    "session_state" TEXT,
+    CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Session" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "sessionToken" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "expires" DATETIME NOT NULL,
+    CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT,
+    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
+    "isBlocked" BOOLEAN NOT NULL DEFAULT false,
+    "email" TEXT,
+    "emailVerified" DATETIME,
+    "image" TEXT
+);
+
+-- CreateTable
 CREATE TABLE "Bookmark" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -45,23 +83,7 @@ CREATE TABLE "Comment" (
     CONSTRAINT "Comment_bookmarkId_fkey" FOREIGN KEY ("bookmarkId") REFERENCES "Bookmark" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Comment_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Comment_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Comment_stackId_fkey" FOREIGN KEY ("stackId") REFERENCES "Stack" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Comment_workId_fkey" FOREIGN KEY ("workId") REFERENCES "Work" ("id") ON DELETE SET NULL ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "Work" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    "publishedAt" DATETIME,
-    "slug" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "text" TEXT NOT NULL,
-    "excerpt" TEXT NOT NULL,
-    "featureImage" TEXT,
-    "userId" TEXT NOT NULL,
-    CONSTRAINT "Work_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "Comment_stackId_fkey" FOREIGN KEY ("stackId") REFERENCES "Stack" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -70,10 +92,11 @@ CREATE TABLE "Post" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     "publishedAt" DATETIME,
+    "published" BOOLEAN NOT NULL DEFAULT false,
     "slug" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "text" TEXT NOT NULL,
-    "excerpt" TEXT NOT NULL,
+    "content" TEXT NOT NULL DEFAULT '',
+    "type" TEXT NOT NULL DEFAULT 'writing',
     "featureImage" TEXT,
     "userId" TEXT NOT NULL,
     CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
@@ -109,13 +132,18 @@ CREATE TABLE "Reaction" (
     "questionId" TEXT,
     "postId" TEXT,
     "stackId" TEXT,
-    "workId" TEXT,
     CONSTRAINT "Reaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Reaction_bookmarkId_fkey" FOREIGN KEY ("bookmarkId") REFERENCES "Bookmark" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Reaction_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Reaction_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Reaction_stackId_fkey" FOREIGN KEY ("stackId") REFERENCES "Stack" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Reaction_workId_fkey" FOREIGN KEY ("workId") REFERENCES "Work" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "Reaction_stackId_fkey" FOREIGN KEY ("stackId") REFERENCES "Stack" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "VerificationToken" (
+    "identifier" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "expires" DATETIME NOT NULL
 );
 
 -- CreateTable
@@ -126,23 +154,14 @@ CREATE TABLE "_StackToUser" (
     CONSTRAINT "_StackToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- RedefineTables
-PRAGMA foreign_keys=OFF;
-CREATE TABLE "new_User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT,
-    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
-    "isBlocked" BOOLEAN NOT NULL DEFAULT false,
-    "email" TEXT,
-    "emailVerified" DATETIME,
-    "image" TEXT
-);
-INSERT INTO "new_User" ("email", "emailVerified", "id", "image", "name") SELECT "email", "emailVerified", "id", "image", "name" FROM "User";
-DROP TABLE "User";
-ALTER TABLE "new_User" RENAME TO "User";
+-- CreateIndex
+CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-PRAGMA foreign_key_check;
-PRAGMA foreign_keys=ON;
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Bookmark_url_key" ON "Bookmark"("url");
@@ -164,12 +183,6 @@ CREATE INDEX "Comment_postId_idx" ON "Comment"("postId");
 
 -- CreateIndex
 CREATE INDEX "Comment_stackId_idx" ON "Comment"("stackId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Work_slug_key" ON "Work"("slug");
-
--- CreateIndex
-CREATE INDEX "Work_publishedAt_idx" ON "Work"("publishedAt");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Post_slug_key" ON "Post"("slug");
@@ -202,7 +215,10 @@ CREATE INDEX "Reaction_postId_idx" ON "Reaction"("postId");
 CREATE INDEX "Reaction_stackId_idx" ON "Reaction"("stackId");
 
 -- CreateIndex
-CREATE INDEX "Reaction_workId_idx" ON "Reaction"("workId");
+CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_StackToUser_AB_unique" ON "_StackToUser"("A", "B");

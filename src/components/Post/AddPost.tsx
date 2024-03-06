@@ -27,7 +27,7 @@ const formSchema = z.object({
     .max(50),
 })
 
-export function AddPostForm() {
+export function AddPostForm({ type }: { type: "writing" | "work" }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,16 +40,19 @@ export function AddPostForm() {
   const { mutateAsync } = api.post.create.useMutation()
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    return mutateAsync(values, {
-      onError(error) {
-        toast.error(error.message)
+    return mutateAsync(
+      { title: values.title, type },
+      {
+        onError(error) {
+          toast.error(error.message)
+        },
+        onSuccess(data) {
+          toast.success("Post created")
+          router.refresh()
+          router.push(`/${type}/${data.slug}`)
+        },
       },
-      onSuccess(data) {
-        toast.success("Post created")
-        router.refresh()
-        router.push(`/writing/${data.slug}`)
-      },
-    })
+    )
   }
 
   return (

@@ -1,5 +1,5 @@
+import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
-import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { kebabCase } from "~/lib/utils"
 
@@ -14,36 +14,33 @@ export const postRouter = createTRPCRouter({
     .input(
       z.object({
         title: z.string().min(1),
+        type: z.enum(["work", "writing"]),
       }),
     )
-    .mutation(async ({ ctx, input: { title } }) => {
+    .mutation(async ({ ctx, input: { title, type } }) => {
       const post = await ctx.db.post.create({
         data: {
           title,
-          description: "",
           slug: kebabCase(title),
           userId: ctx.session.user.id,
+          type,
         },
       })
-
-      revalidatePath("/writing", "layout")
 
       return post
     }),
 
-  updateDescription: adminProcedure
-    .input(z.object({ id: z.string().min(1), description: z.string().min(1) }))
-    .mutation(async ({ ctx, input: { id, description } }) => {
+  updateContent: adminProcedure
+    .input(z.object({ id: z.string().min(1), content: z.string().min(1) }))
+    .mutation(async ({ ctx, input: { id, content } }) => {
       const post = await ctx.db.post.update({
         where: {
           id,
         },
         data: {
-          description,
+          content,
         },
       })
-
-      revalidatePath(`/writing/${post.slug}`, "page")
 
       return post
     }),
@@ -51,20 +48,36 @@ export const postRouter = createTRPCRouter({
   updateTitle: adminProcedure
     .input(z.object({ id: z.string().min(1), title: z.string().min(1) }))
     .mutation(async ({ ctx, input: { id, title } }) => {
-      const post = await ctx.db.post.update({
-        where: {
-          id,
-        },
-        data: {
-          title,
-        },
-      })
-      return post
+      const newSlug = kebabCase(title)
+      try {
+        const post = await ctx.db.post.update({
+          where: {
+            id,
+          },
+          data: {
+            title,
+            slug: newSlug,
+          },
+        })
+        return post
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2002"
+        ) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            cause: "Title already exists",
+          })
+        }
+      }
     }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.post.findMany({})
-  }),
+  getAll: publicProcedure
+    .input(z.object({ type: z.enum(["work", "writing"]) }))
+    .query(async ({ ctx, input: { type } }) => {
+      return ctx.db.post.findMany({ where: { type } })
+    }),
 
   get: publicProcedure
     .input(z.object({ slug: z.string().min(1) }))

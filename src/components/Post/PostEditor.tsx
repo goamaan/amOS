@@ -14,13 +14,13 @@ export function PostEditor({
   post: Post
   user?: Session["user"]
 }) {
-  const [content, setContent] = useState(post.description || JSON.stringify({}))
-  const { mutateAsync } = api.post.updateDescription.useMutation()
+  const [content, setContent] = useState(post.content || JSON.stringify({}))
+  const { mutateAsync } = api.post.updateContent.useMutation()
   const router = useRouter()
 
   const onContentChange = async (content: string) => {
     setContent(content)
-    await mutateAsync({ id: post.id, description: content })
+    await mutateAsync({ id: post.id, content })
     router.refresh()
   }
 

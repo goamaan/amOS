@@ -1,6 +1,6 @@
 import { unstable_noStore } from "next/cache"
 import { ListDetailView } from "~/app/layout"
-import { PostsList } from "~/components/PostsList"
+import { PostsList } from "~/components/Post/PostsList"
 import { getServerAuthSession } from "~/server/auth"
 import { api } from "~/trpc/server"
 
@@ -14,11 +14,18 @@ export default async function Writing({
   unstable_noStore()
 
   const session = await getServerAuthSession()
-  const posts = await api.post.getAll.query()
+  const posts = await api.post.getAll.query({ type: "writing" })
 
   return (
     <ListDetailView
-      list={<PostsList posts={posts} user={session?.user} params={params} />}
+      list={
+        <PostsList
+          type="writing"
+          posts={posts}
+          user={session?.user}
+          params={params}
+        />
+      }
       hasDetail={false}
       detail={null}
     />

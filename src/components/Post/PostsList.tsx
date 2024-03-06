@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog"
 
-function AddPostDialog() {
+function AddPostDialog({ type }: { type: "writing" | "work" }) {
   return (
     <Dialog>
       <DialogTrigger>
@@ -24,7 +24,7 @@ function AddPostDialog() {
         <DialogHeader>
           <DialogTitle>Add new post</DialogTitle>
         </DialogHeader>
-        <AddPostForm />
+        <AddPostForm type={type} />
       </DialogContent>
     </Dialog>
   )
@@ -34,23 +34,25 @@ export async function PostsList({
   params,
   user,
   posts,
+  type,
 }: {
   params: { slug: string }
   user?: Session["user"]
+  type: "writing" | "work"
   posts: Post[]
 }) {
   return (
     <ListContainer>
       <TitleBar
         hasBgColor
-        title="Writing"
-        trailingAccessory={user?.isAdmin ? <AddPostDialog /> : null}
+        title={type === "writing" ? "Writing" : "Work"}
+        trailingAccessory={user?.isAdmin ? <AddPostDialog type={type} /> : null}
       />
       <div className="flex flex-col items-start gap-2 p-2 text-start">
         {posts.map((p) => {
           const active = params.slug === p.slug
           return (
-            <Link key={p.id} href={`/writing/${p.slug}`} className="w-full">
+            <Link key={p.id} href={`/${type}/${p.slug}`} className="w-full">
               <Button
                 variant={active ? "secondary" : "ghost"}
                 className="flex w-full flex-col items-start py-7"

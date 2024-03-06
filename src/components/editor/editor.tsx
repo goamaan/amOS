@@ -22,6 +22,7 @@ import { NodeSelector } from "./selectors/node-selector"
 import { Separator } from "~/components/ui/separator"
 import { TextButtons } from "./selectors/text-buttons"
 import { slashCommand, suggestionItems } from "./slash-command"
+import { cn } from "~/lib/utils"
 
 const extensions = [...defaultExtensions, slashCommand]
 
@@ -61,7 +62,10 @@ export const Editor = ({
         <EditorContent
           initialContent={JSON.parse(content) as JSONContent}
           extensions={extensions}
-          className="relative min-h-16 w-full max-w-screen-lg rounded-md bg-background p-1"
+          className={cn(
+            "relative min-h-16 w-full max-w-screen-lg rounded-md bg-background p-1",
+            editable && "border p-1",
+          )}
           editorProps={{
             ...defaultEditorProps,
             attributes: {

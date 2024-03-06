@@ -11,6 +11,7 @@ import { getServerAuthSession } from "~/server/auth"
 import { GlobalNavigationProvider } from "~/components/providers/navigation-provider"
 import { TooltipProvider } from "~/components/ui/tooltip"
 import { unstable_noStore } from "next/cache"
+import NextTopLoader from "nextjs-toploader"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -76,6 +77,7 @@ export default function RootLayout({
       >
         <TRPCReactProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <NextTopLoader color="#e08434" shadow={false} height={3} />
             <TooltipProvider
               disableHoverableContent
               delayDuration={500}
