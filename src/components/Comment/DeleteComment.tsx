@@ -1,12 +1,14 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { DeleteDialog } from "~/components/DeleteDialog"
 import { SubmitButton } from "~/components/submit-button"
+import { Button } from "~/components/ui/button"
 import { Form } from "~/components/ui/form"
 import { api } from "~/trpc/react"
 
@@ -26,8 +28,8 @@ export function DeleteComment({ id }: { id: string }) {
 
   const { mutateAsync } = api.comment.delete.useMutation()
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    return mutateAsync(values, {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await mutateAsync(values, {
       onError(error) {
         toast.error(error.message)
       },
@@ -40,7 +42,13 @@ export function DeleteComment({ id }: { id: string }) {
 
   return (
     <div className="flex justify-center">
-      <DeleteDialog>
+      <DeleteDialog
+        trigger={
+          <Button variant={"ghost"} size="icon">
+            <X size={14} />
+          </Button>
+        }
+      >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <SubmitButton

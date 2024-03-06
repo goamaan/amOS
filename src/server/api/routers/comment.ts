@@ -134,18 +134,19 @@ export const commentRouter = createTRPCRouter({
   add: protectedProcedure
     .input(
       z.object({
+        id: z.string(),
         text: z.string(),
         type: z.enum(["post", "bookmark", "stack", "work", "question"]),
       }),
     )
-    .mutation(async ({ ctx, input: { text, type } }) => {
+    .mutation(async ({ ctx, input: { id, text, type } }) => {
       switch (type) {
         case "post":
           return ctx.db.comment.create({
             data: {
               userId: ctx.session.user.id,
               text,
-              postId: type,
+              postId: id,
             },
           })
         case "bookmark":
@@ -153,7 +154,7 @@ export const commentRouter = createTRPCRouter({
             data: {
               userId: ctx.session.user.id,
               text,
-              bookmarkId: type,
+              bookmarkId: id,
             },
           })
         case "stack":
@@ -161,7 +162,7 @@ export const commentRouter = createTRPCRouter({
             data: {
               userId: ctx.session.user.id,
               text,
-              stackId: type,
+              stackId: id,
             },
           })
         case "work":
@@ -169,7 +170,7 @@ export const commentRouter = createTRPCRouter({
             data: {
               userId: ctx.session.user.id,
               text,
-              workId: type,
+              workId: id,
             },
           })
         case "question":
@@ -177,7 +178,7 @@ export const commentRouter = createTRPCRouter({
             data: {
               userId: ctx.session.user.id,
               text,
-              questionId: type,
+              questionId: id,
             },
           })
         default:

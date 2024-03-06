@@ -7,6 +7,7 @@ import { api } from "~/trpc/server"
 import { PublishPost } from "~/components/Post/PublishPost"
 import { UnpublishPost } from "~/components/Post/UnpublishPost"
 import { CommentList } from "~/components/Comment/CommentList"
+import { AddComment } from "~/components/Comment/AddComment"
 
 export async function Post({
   slug,
@@ -33,6 +34,7 @@ export async function Post({
         </div>
         <PostEditor post={post} user={user} />
         <CommentList id={post.id} type="post" user={user} />
+        {user && <AddComment id={post.id} type="post" />}
       </div>
     </div>
   )

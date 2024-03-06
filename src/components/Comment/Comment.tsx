@@ -1,38 +1,32 @@
 "use client"
 
-import { type Comment } from "@prisma/client"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Check, MoreHorizontal } from "lucide-react"
 import { type Session } from "next-auth"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { z } from "zod"
+import { DeleteComment } from "~/components/Comment/DeleteComment"
+import { SubmitButton } from "~/components/submit-button"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
-import { api } from "~/trpc/react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
-import { Check, MoreHorizontal } from "lucide-react"
-import { DeleteDialog } from "~/components/DeleteDialog"
-import { SubmitButton } from "~/components/submit-button"
-import { DeleteComment } from "~/components/Comment/DeleteComment"
-import { useState } from "react"
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "~/components/ui/form"
-import { Input } from "~/components/ui/input"
 import { Textarea } from "~/components/ui/textarea"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { api } from "~/trpc/react"
 
 const formSchema = z.object({
   text: z
@@ -77,7 +71,7 @@ export function Comment({
         onError(error) {
           toast.error(error.message)
         },
-        onSuccess(data) {
+        onSuccess() {
           toast.success("Your comment was updated")
           router.refresh()
         },
@@ -86,7 +80,7 @@ export function Comment({
   }
 
   return (
-    <div className="group flex flex-col space-y-0">
+    <div className="group group flex flex-col space-y-0">
       <div className="flex items-center justify-between space-x-4">
         <div className="flex items-center space-x-4">
           <Link href={`/profile/${comment.author.id}`} className="inline-flex">
@@ -113,65 +107,52 @@ export function Comment({
         </div>
 
         {(user?.isAdmin ?? user?.id === comment.author.id) && (
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <MoreHorizontal size={16} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Edit</DropdownMenuLabel>
-              <DropdownMenuItem asChild>
-                <DeleteComment id={comment.id} />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <MoreHorizontal size={16} />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                  Edit
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DeleteComment id={comment.id} />
+          </div>
         )}
       </div>
 
       {isEditing ? (
-        <div className="flex flex-col space-y-3 pl-14">
-          {/* <Textarea
-          onChange={(e) => setEditText(e.target.value)}
-          value={editText}
-          onKeyDown={onKeyDown}
-        />
-        <div className="flex justify-between">
-          <Button onClick={() => setIsEditing(false)}>Cancel</Button>
-          <PrimaryButton
-            disabled={editText.trim().length === 0 || isSavingEdit}
-            onClick={handleSaveEdit}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex w-full items-start gap-2"
           >
-            {isSavingEdit ? <LoadingSpinner /> : 'Save'}
-          </PrimaryButton>
-        </div> */}
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="text"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} className="w-fit min-w-96" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex justify-end">
-                <SubmitButton
-                  isPending={form.formState.isSubmitting}
-                  variant={"default"}
-                >
-                  <Check size={16} />
-                </SubmitButton>
-              </div>
-            </form>
-          </Form>
-        </div>
+            <FormField
+              control={form.control}
+              name="text"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <SubmitButton
+              isPending={form.formState.isSubmitting}
+              variant={"default"}
+            >
+              <Check size={16} />
+            </SubmitButton>
+          </form>
+        </Form>
       ) : (
-        <Textarea defaultValue={comment.text} />
+        <div className="flex-grow pl-14 leading-normal text-muted-foreground">
+          {comment.text}
+        </div>
       )}
     </div>
   )
