@@ -172,13 +172,11 @@ model Reaction {
     question   Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
     post       Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
     stack      Stack?    @relation(fields: [stackId], references: [id], onDelete: Cascade)
-    commentId  String?
     bookmarkId String?
     questionId String?
     postId     String?
     stackId    String?
 
-    @@index([commentId])
     @@index([bookmarkId])
     @@index([questionId])
     @@index([postId])

@@ -17,13 +17,15 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog"
 
-export function SignInDialog() {
+export function SignInDialog({ trigger }: { trigger?: React.ReactNode }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="m-4 flex gap-2">
-          <Github size={16} /> Sign in
-        </Button>
+        {trigger ?? (
+          <Button className="m-4 flex gap-2">
+            <Github size={16} /> Sign in
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

@@ -11,7 +11,7 @@ import {
 } from "~/server/api/trpc"
 
 export const reactionRouter = createTRPCRouter({
-  getReactionsForEntry: protectedProcedure
+  getReactionsForEntry: publicProcedure
     .input(
       z.object({
         id: z.string(),
@@ -19,29 +19,33 @@ export const reactionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input: { id, type } }) => {
-      let likes
-      switch (type) {
-        case "post":
-          likes = await ctx.db.reaction.findMany({
-            where: { postId: id },
-            include: { user: { select: { id: true } } },
-          })
-        case "stack":
-          likes = await ctx.db.reaction.findMany({
-            where: { stackId: id },
-            include: { user: { select: { id: true } } },
-          })
-        case "question":
-          likes = await ctx.db.reaction.findMany({
-            where: { questionId: id },
-            include: { user: { select: { id: true } } },
-          })
-        default:
-          likes = await ctx.db.reaction.findMany({
-            where: { bookmarkId: id },
-            include: { user: { select: { id: true } } },
-          })
+      return ctx.db.reaction.findMany({
+        where: { [`${type}Id`]: id },
+      })
+    }),
+  toggleReaction: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        type: z.enum(["post", "stack", "question", "bookmark"]),
+      }),
+    )
+    .mutation(async ({ ctx, input: { id, type } }) => {
+      const hasLiked = await ctx.db.reaction.findFirst({
+        where: { userId: ctx.session.user.id, [`${type}Id`]: id },
+      })
+      if (hasLiked) {
+        return ctx.db.reaction.delete({
+          where: {
+            id: hasLiked.id,
+          },
+        })
       }
-      return likes
+      return ctx.db.reaction.create({
+        data: {
+          userId: ctx.session.user.id,
+          [`${type}Id`]: id,
+        },
+      })
     }),
 })
