@@ -1,5 +1,10 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import {
+  generateUploadButton,
+  generateUploadDropzone,
+} from "@uploadthing/react"
+import { type ImageFileRouter } from "~/app/api/uploadthing/core"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -11,3 +16,6 @@ export function kebabCase(str: string): string {
   // Remove hyphens from the beginning and end of the string
   return kebab.replace(/^-+|-+$/g, "")
 }
+
+export const UploadButton = generateUploadButton<ImageFileRouter>()
+export const UploadDropzone = generateUploadDropzone<ImageFileRouter>()

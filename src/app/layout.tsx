@@ -11,7 +11,10 @@ import { getServerAuthSession } from "~/server/auth"
 import { GlobalNavigationProvider } from "~/components/providers/navigation-provider"
 import { TooltipProvider } from "~/components/ui/tooltip"
 import { unstable_noStore } from "next/cache"
-import NextTopLoader from "nextjs-toploader"
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin"
+import { extractRouterConfig } from "uploadthing/server"
+import ProgressProvider from "~/components/providers/progress-provider"
+import { imageFileRouter } from "~/app/api/uploadthing/core"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -77,14 +80,25 @@ export default function RootLayout({
       >
         <TRPCReactProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <NextTopLoader color="#e08434" shadow={false} height={3} />
             <TooltipProvider
               disableHoverableContent
               delayDuration={500}
               skipDelayDuration={0}
             >
               <GlobalNavigationProvider>
-                <SiteLayout>{children}</SiteLayout>
+                <SiteLayout>
+                  <ProgressProvider />
+                  <NextSSRPlugin
+                    /**
+                     * The `extractRouterConfig` will extract **only** the route configs
+                     * from the router to prevent additional information from being
+                     * leaked to the client. The data passed to the client is the same
+                     * as if you were to fetch `/api/uploadthing` directly.
+                     */
+                    routerConfig={extractRouterConfig(imageFileRouter)}
+                  />
+                  {children}
+                </SiteLayout>
                 <Toaster
                   visibleToasts={3}
                   toastOptions={{

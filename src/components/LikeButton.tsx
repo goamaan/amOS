@@ -3,6 +3,7 @@
 import { Heart } from "lucide-react"
 import { type Session } from "next-auth"
 import { useCallback } from "react"
+import { toast } from "sonner"
 import { SignInDialog } from "~/components/SignInDialog"
 import { Button } from "~/components/ui/button"
 import { Spinner } from "~/components/ui/spinner"
@@ -48,10 +49,17 @@ export function LikeButton({
 
   const toggleLike = async () => {
     if (!user) return
-    await mutateAsync({
-      id,
-      type,
-    })
+    await mutateAsync(
+      {
+        id,
+        type,
+      },
+      {
+        onError(error) {
+          toast.error(error.message)
+        },
+      },
+    )
   }
 
   const liked = data?.some((like) => like.userId === user?.id)

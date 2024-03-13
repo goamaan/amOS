@@ -62,9 +62,9 @@ model Bookmark {
     id          String   @id @default(cuid())
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+    host        String
     url         String   @unique
     title       String?
-    image       String?
     description String?
     faviconUrl  String?
 

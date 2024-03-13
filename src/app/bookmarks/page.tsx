@@ -1,13 +1,30 @@
 import { unstable_noStore } from "next/cache"
 import { ListDetailView } from "~/app/layout"
+import { BookmarksList } from "~/components/Bookmark/BookmarkList"
 import { getServerAuthSession } from "~/server/auth"
 import { api } from "~/trpc/server"
 
-export default async function Bookmarks() {
+export default async function Bookmarks({
+  params,
+}: {
+  params: { id: string }
+}) {
   unstable_noStore()
 
   const session = await getServerAuthSession()
-  const posts = await api.bookmark.getAll.query({ type: "writing" })
+  const bookmarks = await api.bookmark.getAll.query()
 
-  return <ListDetailView list={null} hasDetail detail={<div></div>} />
+  return (
+    <ListDetailView
+      list={
+        <BookmarksList
+          bookmarks={bookmarks}
+          user={session?.user}
+          params={params}
+        />
+      }
+      hasDetail
+      detail={<div></div>}
+    />
+  )
 }

@@ -12,7 +12,6 @@ import {
   Mail,
   MessagesSquare,
   NotebookPen,
-  PlusCircle,
   Puzzle,
   Twitter,
   Waypoints,
@@ -28,34 +27,12 @@ import { useGlobalNavigation } from "~/components/providers/navigation-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import { Button } from "~/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog"
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { cn } from "~/lib/utils"
-
-function AddBookmarkDialog() {
-  return (
-    <Dialog>
-      <DialogTrigger>
-        <PlusCircle />{" "}
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add a bookmark</DialogTitle>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
-  )
-}
 
 export function Sidebar({ user }: { user?: Session["user"] }) {
   const { isOpen, setIsOpen } = useGlobalNavigation()
@@ -71,7 +48,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Home />,
           trailingAccessory: null,
           isActive: pathname === "/",
-          trailingAction: null,
           isExternal: false,
         },
         {
@@ -80,7 +56,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <NotebookPen />,
           trailingAccessory: null,
           isActive: pathname.indexOf("/writing") >= 0,
-          trailingAction: null,
           isExternal: false,
         },
       ],
@@ -94,7 +69,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Briefcase />,
           trailingAccesory: null,
           isActive: pathname.indexOf("/work") >= 0,
-          trailingAction: null,
           isExternal: false,
         },
         {
@@ -103,10 +77,8 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Bookmark />,
           trailingAccessory: null,
           isActive: pathname.indexOf("/bookmarks") >= 0,
-          trailingAction: user?.isAdmin ? AddBookmarkDialog : null,
           isExternal: false,
         },
-
         {
           href: "/ama",
           label: "AMA",
@@ -115,7 +87,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           isActive:
             pathname.indexOf("/ama") >= 0 &&
             !pathname.startsWith("/ama/pending"),
-          trailingAction: null,
           isExternal: false,
         },
         {
@@ -124,7 +95,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Layers />,
           trailingAccessory: null,
           isActive: pathname.indexOf("/stack") >= 0,
-          trailingAction: null,
           isExternal: false,
         },
       ],
@@ -138,7 +108,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <FileCode />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
-          trailingAction: null,
           isExternal: true,
         },
         {
@@ -147,7 +116,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Waypoints />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
-          trailingAction: null,
           isExternal: true,
         },
         {
@@ -156,7 +124,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Puzzle />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
-          trailingAction: null,
           isExternal: true,
         },
         {
@@ -165,7 +132,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Gamepad2 />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
-          trailingAction: null,
           isExternal: true,
         },
       ],
@@ -179,7 +145,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Twitter />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
-          trailingAction: null,
           isExternal: true,
         },
         {
@@ -188,7 +153,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Github />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
-          trailingAction: null,
           isExternal: true,
         },
         {
@@ -197,7 +161,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           icon: <Mail />,
           trailingAccessory: ExternalLinkIcon,
           isActive: false,
-          trailingAction: null,
           isExternal: true,
         },
       ],
@@ -242,7 +205,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
                           isExternal,
                           label,
                           trailingAccessory: Accessory,
-                          trailingAction: Action,
                           isActive,
                         }) => (
                           <li
@@ -276,7 +238,6 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
                                 )}
                               </Button>
                             </Link>
-                            {Action && <Action />}
                           </li>
                         ),
                       )}

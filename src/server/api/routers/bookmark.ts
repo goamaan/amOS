@@ -10,105 +10,119 @@ import {
 } from "~/server/api/trpc"
 
 export const bookmarkRouter = createTRPCRouter({
-  create: adminProcedure
+  createTag: adminProcedure
     .input(
       z.object({
-        title: z.string().min(1),
-        type: z.enum(["work", "writing"]),
+        name: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input: { title, type } }) => {
-      const post = await ctx.db.bookmark.create({
-        data: {
-          title,
-          userId: ctx.session.user.id,
-          type,
-        },
-      })
-
-      return post
-    }),
-
-  updateContent: adminProcedure
-    .input(z.object({ id: z.string().min(1), content: z.string().min(1) }))
-    .mutation(async ({ ctx, input: { id, content } }) => {
-      const post = await ctx.db.post.update({
-        where: {
-          id,
-        },
-        data: {
-          content,
-        },
-      })
-
-      return post
-    }),
-
-  updateTitle: adminProcedure
-    .input(z.object({ id: z.string().min(1), title: z.string().min(1) }))
-    .mutation(async ({ ctx, input: { id, title } }) => {
-      const newSlug = kebabCase(title)
+    .mutation(async ({ ctx, input: { name } }) => {
       try {
-        const post = await ctx.db.post.update({
-          where: {
-            id,
-          },
+        return ctx.db.bookmarkTag.create({
           data: {
-            title,
-            slug: newSlug,
+            name,
           },
         })
-        return post
-      } catch (error) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.code === "P2002"
-        ) {
-          throw new TRPCError({
-            code: "CONFLICT",
-            cause: "Title already exists",
-          })
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === "P2002") {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "Tag already exists",
+            })
+          }
         }
       }
     }),
 
-  getAll: publicProcedure
-    .input(z.object({ type: z.enum(["work", "writing"]) }))
-    .query(async ({ ctx, input: { type } }) => {
-      return ctx.db.post.findMany({ where: { type } })
+  create: adminProcedure
+    .input(
+      z.object({
+        title: z.string().min(1),
+        description: z.string().min(1),
+        host: z.string().min(1),
+        url: z.string().url("Must be a valid URL"),
+        tagId: z.string().min(1),
+        faviconUrl: z.string().url("Must be a valid URL").optional(),
+      }),
+    )
+    .mutation(
+      async ({ ctx, input: { title, description, host, url, tagId } }) => {
+        try {
+          return ctx.db.bookmark.create({
+            data: {
+              title,
+              description,
+              url,
+              host,
+              tagId,
+            },
+          })
+        } catch (e) {
+          if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            if (e.code === "P2002") {
+              throw new TRPCError({
+                code: "CONFLICT",
+                message: "Bookmark with the same URL already exists",
+              })
+            }
+          }
+        }
+      },
+    ),
+
+  update: adminProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+        title: z.string().min(1),
+        url: z.string().url(),
+        host: z.string().min(1),
+        description: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input: { id, description, host, title, url } }) => {
+      return ctx.db.bookmark.update({
+        where: {
+          id,
+        },
+        data: {
+          title,
+          description,
+          host,
+          url,
+        },
+      })
     }),
 
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.bookmark.findMany()
+  }),
+
   get: publicProcedure
-    .input(z.object({ slug: z.string().min(1) }))
-    .query(async ({ ctx, input: { slug } }) => {
-      const post = await ctx.db.post.findUnique({ where: { slug } })
-      if (!post) {
-        throw new TRPCError({ code: "NOT_FOUND", cause: "Post not found" })
+    .input(z.object({ id: z.string().min(1) }))
+    .query(async ({ ctx, input: { id } }) => {
+      const bookmark = await ctx.db.bookmark.findUnique({ where: { id } })
+      if (!bookmark) {
+        throw new TRPCError({ code: "NOT_FOUND", cause: "Bookmark not found" })
       }
-      return post
+      return bookmark
     }),
 
   delete: adminProcedure
     .input(z.object({ id: z.string().min(1) }))
     .mutation(async ({ ctx, input: { id } }) => {
-      return ctx.db.post.delete({ where: { id } })
-    }),
-
-  publish: adminProcedure
-    .input(z.object({ id: z.string().min(1) }))
-    .mutation(async ({ ctx, input: { id } }) => {
-      return ctx.db.post.update({
-        where: { id },
-        data: { published: true, publishedAt: new Date() },
-      })
-    }),
-
-  unpublish: adminProcedure
-    .input(z.object({ id: z.string().min(1) }))
-    .mutation(async ({ ctx, input: { id } }) => {
-      return ctx.db.post.update({
-        where: { id },
-        data: { published: false, publishedAt: null },
-      })
+      try {
+        return ctx.db.bookmark.delete({ where: { id } })
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === "P2025") {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              cause: "Bookmark not found",
+            })
+          }
+        }
+      }
     }),
 })
