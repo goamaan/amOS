@@ -10,6 +10,24 @@ import {
 } from "~/server/api/trpc"
 
 export const bookmarkRouter = createTRPCRouter({
+  get: publicProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .query(async ({ ctx, input: { id } }) => {
+      const bookmark = await ctx.db.bookmark.findUnique({ where: { id } })
+      if (!bookmark) {
+        throw new TRPCError({ code: "NOT_FOUND", cause: "Bookmark not found" })
+      }
+      return bookmark
+    }),
+
+  getTags: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.bookmarkTag.findMany()
+  }),
+
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.bookmark.findMany()
+  }),
+
   createTag: adminProcedure
     .input(
       z.object({
@@ -29,6 +47,27 @@ export const bookmarkRouter = createTRPCRouter({
             throw new TRPCError({
               code: "CONFLICT",
               message: "Tag already exists",
+            })
+          }
+        }
+      }
+    }),
+
+  deleteTag: adminProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input: { id } }) => {
+      try {
+        return ctx.db.bookmarkTag.delete({ where: { id } })
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === "P2002") {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Tag not found",
             })
           }
         }
@@ -93,20 +132,6 @@ export const bookmarkRouter = createTRPCRouter({
           url,
         },
       })
-    }),
-
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.bookmark.findMany()
-  }),
-
-  get: publicProcedure
-    .input(z.object({ id: z.string().min(1) }))
-    .query(async ({ ctx, input: { id } }) => {
-      const bookmark = await ctx.db.bookmark.findUnique({ where: { id } })
-      if (!bookmark) {
-        throw new TRPCError({ code: "NOT_FOUND", cause: "Bookmark not found" })
-      }
-      return bookmark
     }),
 
   delete: adminProcedure

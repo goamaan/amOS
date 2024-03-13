@@ -4,6 +4,7 @@ import { type Session } from "next-auth"
 import Image from "next/image"
 import Link from "next/link"
 import { AddBookmarkForm } from "~/components/Bookmark/AddBookmark"
+import { BookmarkTags } from "~/components/Bookmark/BookmarkTags"
 import { ListContainer } from "~/components/ListContainer"
 import { TitleBar } from "~/components/TitleBar"
 import { Button } from "~/components/ui/button"
@@ -41,7 +42,7 @@ function AddBookmarkTagDialog() {
         <DialogHeader>
           <DialogTitle>Bookmark Tags</DialogTitle>
         </DialogHeader>
-        <AddBookmarkForm />
+        <BookmarkTags />
       </DialogContent>
     </Dialog>
   )
