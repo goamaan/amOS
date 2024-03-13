@@ -9,7 +9,7 @@ const ProgressProvider = () => {
       color="#de6e18"
       options={{ showSpinner: false }}
       shallowRouting
-      delay={100}
+      delay={500}
     />
   )
 }

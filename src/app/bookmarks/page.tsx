@@ -23,8 +23,8 @@ export default async function Bookmarks({
           params={params}
         />
       }
-      hasDetail
-      detail={<div></div>}
+      hasDetail={false}
+      detail={null}
     />
   )
 }

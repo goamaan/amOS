@@ -69,7 +69,7 @@ export function AddComment({
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <Textarea placeholder="Great post! :D" {...field} />
+                  <Textarea rows={4} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

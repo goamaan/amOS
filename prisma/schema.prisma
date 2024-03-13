@@ -89,7 +89,7 @@ model Question {
     updatedAt   DateTime   @updatedAt
     author      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     title       String
-    description String?
+    description String
     userId      String
     comments    Comment[]
     reactions   Reaction[]

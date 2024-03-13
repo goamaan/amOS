@@ -67,7 +67,7 @@ export function BookmarkDetail({
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add new Bookmark</DialogTitle>
+                  <DialogTitle>Edit bookmark</DialogTitle>
                 </DialogHeader>
                 <EditBookmarkForm bookmark={bookmark} />
               </DialogContent>

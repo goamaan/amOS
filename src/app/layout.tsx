@@ -107,7 +107,7 @@ export default function RootLayout({
                   richColors={true}
                   duration={3000}
                   closeButton={true}
-                  position="top-right"
+                  position="bottom-right"
                 />
               </GlobalNavigationProvider>
             </TooltipProvider>
