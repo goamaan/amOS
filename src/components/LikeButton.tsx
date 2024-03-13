@@ -2,7 +2,6 @@
 
 import { Heart } from "lucide-react"
 import { type Session } from "next-auth"
-import { useCallback } from "react"
 import { toast } from "sonner"
 import { SignInDialog } from "~/components/SignInDialog"
 import { Button } from "~/components/ui/button"
@@ -18,7 +17,7 @@ export function LikeButton({
   type: "post" | "stack" | "question" | "bookmark"
   user?: Session["user"]
 }) {
-  const { data, isFetching, isError, error } =
+  const { data, isLoading, isError, error } =
     api.reaction.getReactionsForEntry.useQuery(
       {
         id,
@@ -30,22 +29,7 @@ export function LikeButton({
       },
     )
 
-  const { mutateAsync, isLoading } = api.reaction.toggleReaction.useMutation({
-    //     onMutate: async ({ id, type }) => {
-    //       if (!user) return
-    // await client({ queryKey: ['todos', newTodo.id] })
-    //       data?.push({
-    //         userId: user.id,
-    //         postId: id,
-    //         bookmarkId: null,
-    //         stackId: null,
-    //         questionId: null,
-    //         createdAt: new Date(),
-    //         id: "",
-    //         user: { id: user.id },
-    //       })
-    //     },
-  })
+  const { mutateAsync } = api.reaction.toggleReaction.useMutation({})
 
   const toggleLike = async () => {
     if (!user) return
@@ -64,7 +48,7 @@ export function LikeButton({
 
   const liked = data?.some((like) => like.userId === user?.id)
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <Button variant={"outline"} size={"icon"}>
         <Spinner size={"sm"} />

@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { type Bookmark } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -51,27 +52,36 @@ const formSchema = z.object({
   tagId: z.string().min(1),
 })
 
-export function AddBookmarkForm() {
-  const [faviconUrl, setFaviconUrl] = useState<string | undefined>()
+export function EditBookmarkForm({ bookmark }: { bookmark: Bookmark }) {
+  const [faviconUrl, setFaviconUrl] = useState<string | undefined>(
+    bookmark.faviconUrl ?? undefined,
+  )
   const { data: tags, isFetching } = api.bookmark.getTags.useQuery()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: bookmark.title,
+      description: bookmark.description,
+      url: bookmark.url,
+      host: bookmark.host,
+      tagId: bookmark.tagId,
+    },
   })
 
   const router = useRouter()
 
-  const { mutateAsync } = api.bookmark.create.useMutation()
+  const { mutateAsync } = api.bookmark.update.useMutation()
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     return mutateAsync(
-      { ...values, faviconUrl },
+      { ...values, faviconUrl, id: bookmark.id },
       {
         onError(error) {
           toast.error(error.message)
         },
         onSuccess(data) {
-          toast.success("Bookmark created")
+          toast.success("Bookmark updated")
           router.refresh()
           router.push(`/bookmarks/${data?.id}`)
         },
@@ -192,7 +202,7 @@ export function AddBookmarkForm() {
             isPending={form.formState.isSubmitting}
             variant={"default"}
           >
-            Create
+            Update
           </SubmitButton>
         </div>
       </form>

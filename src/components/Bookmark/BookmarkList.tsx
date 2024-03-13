@@ -1,4 +1,4 @@
-import { type Bookmark, type Post } from "@prisma/client"
+import { type Bookmark } from "@prisma/client"
 import { ExternalLink, Plus, Tag } from "lucide-react"
 import { type Session } from "next-auth"
 import Image from "next/image"
@@ -81,9 +81,14 @@ export async function BookmarksList({
                 className="flex w-full flex-col items-start py-7"
               >
                 <p className="">{p.title}</p>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
                   {p.faviconUrl ? (
-                    <Image alt="favicon" src={p.faviconUrl} />
+                    <Image
+                      width={16}
+                      height={16}
+                      alt="favicon"
+                      src={p.faviconUrl}
+                    />
                   ) : (
                     <ExternalLink size={14} />
                   )}

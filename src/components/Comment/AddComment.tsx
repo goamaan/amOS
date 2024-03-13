@@ -57,7 +57,7 @@ export function AddComment({
   }
 
   return (
-    <div className="flex w-[90%]">
+    <div className="flex">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

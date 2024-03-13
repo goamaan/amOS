@@ -33,7 +33,7 @@ const formSchema = z.object({
 export function BookmarkTags() {
   const {
     data: tags,
-    isFetching,
+    isLoading,
     isError,
     error,
   } = api.bookmark.getTags.useQuery()
@@ -73,7 +73,7 @@ export function BookmarkTags() {
     )
   }
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex justify-center">
         <Spinner />

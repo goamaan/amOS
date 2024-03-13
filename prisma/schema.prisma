@@ -64,8 +64,8 @@ model Bookmark {
     updatedAt   DateTime @updatedAt
     host        String
     url         String   @unique
-    title       String?
-    description String?
+    title       String
+    description String
     faviconUrl  String?
 
     comments  Comment[]

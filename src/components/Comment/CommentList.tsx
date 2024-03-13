@@ -15,7 +15,7 @@ export function CommentList({
   type: "post" | "bookmark" | "stack" | "work" | "question"
   user?: Session["user"]
 }) {
-  const { data, isFetching, isError, error } =
+  const { data, isLoading, isError, error } =
     api.comment.getAllForType.useQuery(
       { id, type },
       {
@@ -23,7 +23,7 @@ export function CommentList({
         refetchOnReconnect: false,
       },
     )
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex justify-center">
         <Spinner />
