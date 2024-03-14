@@ -22,7 +22,7 @@ function AddBookmarkDialog() {
       <DialogTrigger>
         <Plus size={16} />
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-full max-w-2xl">
         <DialogHeader>
           <DialogTitle>Add new Bookmark</DialogTitle>
         </DialogHeader>
