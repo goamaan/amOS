@@ -5,8 +5,6 @@ import { BookmarksList } from "~/components/Bookmark/BookmarkList"
 import { getServerAuthSession } from "~/server/auth"
 import { api } from "~/trpc/server"
 
-export const dynamic = "force-dynamic"
-
 export default async function Bookmark({ params }: { params: { id: string } }) {
   unstable_noStore()
   const session = await getServerAuthSession()

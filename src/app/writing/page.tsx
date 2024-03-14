@@ -4,8 +4,6 @@ import { PostsList } from "~/components/Post/PostsList"
 import { getServerAuthSession } from "~/server/auth"
 import { api } from "~/trpc/server"
 
-export const dynamic = "force-dynamic"
-
 export default async function Writing({
   params,
 }: {

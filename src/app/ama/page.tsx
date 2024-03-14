@@ -4,8 +4,6 @@ import { QuestionsList } from "~/components/Question/QuestionsList"
 import { getServerAuthSession } from "~/server/auth"
 import { api } from "~/trpc/server"
 
-export const dynamic = "force-dynamic"
-
 export default async function AMA({ params }: { params: { id: string } }) {
   unstable_noStore()
 
