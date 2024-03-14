@@ -21,6 +21,7 @@ export const postRouter = createTRPCRouter({
       const post = await ctx.db.post.create({
         data: {
           title,
+          content: JSON.stringify({}),
           slug: kebabCase(title),
           userId: ctx.session.user.id,
           type,
@@ -107,7 +108,11 @@ export const postRouter = createTRPCRouter({
   getAll: publicProcedure
     .input(z.object({ type: z.enum(["work", "writing"]) }))
     .query(async ({ ctx, input: { type } }) => {
-      return ctx.db.post.findMany({ where: { type } })
+      if (ctx.session?.user.isAdmin) {
+        return ctx.db.post.findMany({ where: { type } })
+      } else {
+        return ctx.db.post.findMany({ where: { type, published: true } })
+      }
     }),
 
   get: publicProcedure
@@ -117,7 +122,12 @@ export const postRouter = createTRPCRouter({
       if (!post) {
         throw new TRPCError({ code: "NOT_FOUND", cause: "Post not found" })
       }
-      return post
+      if (ctx.session?.user.isAdmin) {
+        return post
+      } else if (post.published) {
+        return post
+      }
+      throw new TRPCError({ code: "NOT_FOUND", cause: "Post not found" })
     }),
 
   delete: adminProcedure
