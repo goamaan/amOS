@@ -61,7 +61,7 @@ export function AddComment({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="m-4 flex w-full items-center gap-4"
+          className="m-4 flex w-full flex-col gap-4"
         >
           <FormField
             control={form.control}

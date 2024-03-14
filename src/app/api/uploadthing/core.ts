@@ -6,7 +6,7 @@ const f = createUploadthing()
 
 export const imageFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
-  imageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+  imageUploader: f({ image: { maxFileSize: "2MB", maxFileCount: 1 } })
     .middleware(async ({}) => {
       const session = await getServerAuthSession()
       if (!session) throw new UploadThingError("Unauthorized")

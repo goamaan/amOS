@@ -37,8 +37,10 @@ function AddStackDialog() {
 function AddStackTagDialog() {
   return (
     <Dialog>
-      <DialogTrigger>
-        <Tag size={16} />
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Tag size={16} />
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -66,7 +68,7 @@ export async function StackList({
         title={"Stack"}
         trailingAccessory={
           user?.isAdmin ? (
-            <div className="flex gap-6">
+            <div className="flex gap-1">
               <AddStackTagDialog />
               <AddStackDialog />
             </div>

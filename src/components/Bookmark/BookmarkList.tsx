@@ -19,8 +19,10 @@ import {
 function AddBookmarkDialog() {
   return (
     <Dialog>
-      <DialogTrigger>
-        <Plus size={16} />
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Plus size={16} />
+        </Button>
       </DialogTrigger>
       <DialogContent className="w-full max-w-2xl">
         <DialogHeader>
@@ -35,8 +37,10 @@ function AddBookmarkDialog() {
 function AddBookmarkTagDialog() {
   return (
     <Dialog>
-      <DialogTrigger>
-        <Tag size={16} />
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Tag size={16} />
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -64,7 +68,7 @@ export async function BookmarksList({
         title={"Bookmarks"}
         trailingAccessory={
           user?.isAdmin ? (
-            <div className="flex gap-6">
+            <div className="flex gap-1">
               <AddBookmarkTagDialog />
               <AddBookmarkDialog />
             </div>

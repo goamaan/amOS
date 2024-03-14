@@ -13,12 +13,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog"
+import Image from "next/image"
 
 function AddPostDialog({ type }: { type: "writing" | "work" }) {
   return (
     <Dialog>
-      <DialogTrigger>
-        <Plus size={16} />
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Plus size={16} />
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -55,12 +58,24 @@ export async function PostsList({
             <Link key={p.id} href={`/${type}/${p.slug}`} className="w-full">
               <Button
                 variant={active ? "secondary" : "ghost"}
-                className="flex w-full flex-col items-start py-7"
+                className="flex w-full items-center gap-2 py-7"
               >
-                <p className="">{p.title}</p>
-                <p className="justify-start text-sm text-muted-foreground">
-                  {p.publishedAt?.toDateString() ?? p.updatedAt.toDateString()}
-                </p>
+                {p.featureImage && (
+                  <Image
+                    alt="post feature image"
+                    className="rounded"
+                    src={p.featureImage}
+                    width={36}
+                    height={36}
+                  />
+                )}
+                <div className="flex w-full flex-col items-start py-7">
+                  <p className="">{p.title}</p>
+                  <p className="justify-start text-sm text-muted-foreground">
+                    {p.publishedAt?.toDateString() ??
+                      p.updatedAt.toDateString()}
+                  </p>
+                </div>
               </Button>
             </Link>
           )

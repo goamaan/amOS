@@ -29,42 +29,25 @@ const extensions = [...defaultExtensions, slashCommand]
 export const Editor = ({
   editable = false,
   content,
-  onContentChange,
+  setContent,
 }: {
   editable?: boolean
   content: string
-  onContentChange: (content: string) => void
+  setContent?: (content: string) => void
 }) => {
-  const [saveStatus, setSaveStatus] = useState("Saved")
-
   const [openNode, setOpenNode] = useState(false)
   const [openColor, setOpenColor] = useState(false)
   const [openLink, setOpenLink] = useState(false)
 
-  const debouncedUpdates = useDebouncedCallback(
-    async (editor: EditorInstance) => {
-      const json = editor.getJSON()
-
-      onContentChange(JSON.stringify(json))
-      setSaveStatus("Saved")
-    },
-    1000,
-  )
-
   return (
-    <div className="relative w-[90%] max-w-screen-md self-center">
-      {editable && (
-        <div className="z-10 mb-2 w-fit rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
-          {saveStatus}
-        </div>
-      )}
+    <div className="relative self-center">
       <EditorRoot>
         <EditorContent
           initialContent={JSON.parse(content) as JSONContent}
           extensions={extensions}
           className={cn(
             "relative min-h-16 w-full max-w-screen-lg rounded-md bg-background p-1",
-            editable && "border p-1",
+            editable && "border p-2",
           )}
           editorProps={{
             ...defaultEditorProps,
@@ -73,10 +56,9 @@ export const Editor = ({
             },
           }}
           editable={editable}
-          onUpdate={({ editor }) => {
-            void debouncedUpdates(editor)
-            setSaveStatus("Unsaved")
-          }}
+          onUpdate={({ editor }) =>
+            setContent?.(JSON.stringify(editor.getJSON()))
+          }
           slotAfter={<ImageResizer />}
         >
           {editable && (

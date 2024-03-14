@@ -40,7 +40,7 @@ export function CommentList({
         <MessageCircle className="self-center" />
         <div className="h-0.5 max-w-40 flex-1 border-t-2 border-dashed"></div>
       </div>
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col space-y-3 px-4 pb-4 pt-8 md:px-8">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col space-y-3 px-4 py-4 md:px-8">
         <div className="flex flex-col gap-2 space-y-3">
           {data.length > 0 &&
             data.map((comment) => (

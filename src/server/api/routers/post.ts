@@ -45,6 +45,37 @@ export const postRouter = createTRPCRouter({
       return post
     }),
 
+  update: adminProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+        title: z.string().min(2),
+        content: z.string(),
+        featureImage: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input: { id, title, content, featureImage } }) => {
+      try {
+        return ctx.db.post.update({
+          where: {
+            id,
+          },
+          data: {
+            title,
+            content,
+            featureImage,
+          },
+        })
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2002"
+        ) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" })
+        }
+      }
+    }),
+
   updateTitle: adminProcedure
     .input(z.object({ id: z.string().min(1), title: z.string().min(1) }))
     .mutation(async ({ ctx, input: { id, title } }) => {

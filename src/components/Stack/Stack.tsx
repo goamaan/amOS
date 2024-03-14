@@ -28,6 +28,12 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog"
 import { Spinner } from "~/components/ui/spinner"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip"
 import { api } from "~/trpc/react"
 
 export function StackDetail({
@@ -95,18 +101,26 @@ export function StackDetail({
               Also used by {stack.users.length} other people
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-wrap gap-2">
             {stack.users.map((u) => (
-              <Link
-                key={u.id}
-                href={`/profile/${u.id}`}
-                className="flex items-center space-x-2"
-              >
-                <Avatar>
-                  <AvatarImage src={u.image ?? undefined} />
-                  <AvatarFallback>{u.name?.charAt(0)}</AvatarFallback>
-                </Avatar>
-              </Link>
+              <TooltipProvider key={u.id}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Link
+                      href={`/profile/${u.id}`}
+                      className="flex items-center space-x-2"
+                    >
+                      <Avatar>
+                        <AvatarImage src={u.image ?? undefined} />
+                        <AvatarFallback>{u.name?.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-secondary text-secondary-foreground">
+                    {u.name}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ))}
           </CardContent>
           <CardFooter>
