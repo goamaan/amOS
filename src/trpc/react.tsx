@@ -6,7 +6,7 @@ import { createTRPCReact } from "@trpc/react-query"
 import { useState } from "react"
 
 import { type AppRouter } from "~/server/api/root"
-import { getUrl, transformer } from "./shared"
+import SuperJSON from "superjson"
 
 const createQueryClient = () => new QueryClient()
 
@@ -18,6 +18,12 @@ const getQueryClient = () => {
   }
   // Browser: use singleton pattern to keep the same query client
   return (clientQueryClientSingleton ??= createQueryClient())
+}
+
+function getBaseUrl() {
+  if (typeof window !== "undefined") return ""
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  return `http://localhost:${process.env.PORT ?? 3000}`
 }
 
 export const api = createTRPCReact<AppRouter>({
@@ -46,7 +52,6 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 
   const [trpcClient] = useState(() =>
     api.createClient({
-      transformer,
       links: [
         loggerLink({
           enabled: (op) =>
@@ -54,7 +59,13 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             (op.direction === "down" && op.result instanceof Error),
         }),
         unstable_httpBatchStreamLink({
-          url: getUrl(),
+          transformer: SuperJSON,
+          url: getBaseUrl() + "/api/trpc",
+          headers: () => {
+            const headers = new Headers()
+            headers.set("x-trpc-source", "nextjs-react")
+            return headers
+          },
         }),
       ],
     }),

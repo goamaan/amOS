@@ -1,4 +1,3 @@
-import { unstable_noStore } from "next/cache"
 import { ListDetailView } from "~/app/layout"
 import { PostsList } from "~/components/Post/PostsList"
 import { getServerAuthSession } from "~/server/auth"
@@ -9,10 +8,8 @@ export default async function Writing({
 }: {
   params: { slug: string }
 }) {
-  unstable_noStore()
-
   const session = await getServerAuthSession()
-  const posts = await api.post.getAll.query({ type: "writing" })
+  const posts = await api.post.getAll({ type: "writing" })
 
   return (
     <ListDetailView

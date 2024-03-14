@@ -8,21 +8,19 @@ import {
   EditorContent,
   EditorRoot,
   defaultEditorProps,
-  type EditorInstance,
   type JSONContent,
 } from "novel"
 import { ImageResizer } from "novel/extensions"
 import { useState } from "react"
-import { useDebouncedCallback } from "use-debounce"
 import { defaultExtensions } from "./extensions"
 import { ColorSelector } from "./selectors/color-selector"
 import { LinkSelector } from "./selectors/link-selector"
 import { NodeSelector } from "./selectors/node-selector"
 
 import { Separator } from "~/components/ui/separator"
+import { cn } from "~/lib/utils"
 import { TextButtons } from "./selectors/text-buttons"
 import { slashCommand, suggestionItems } from "./slash-command"
-import { cn } from "~/lib/utils"
 
 const extensions = [...defaultExtensions, slashCommand]
 

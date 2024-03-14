@@ -1,4 +1,3 @@
-import { unstable_noStore } from "next/cache"
 import { ListDetailView } from "~/app/layout"
 import { QuestionDetail } from "~/components/Question/Question"
 import { QuestionsList } from "~/components/Question/QuestionsList"
@@ -10,10 +9,8 @@ export default async function AMAQuestion({
 }: {
   params: { id: string }
 }) {
-  unstable_noStore()
-
   const session = await getServerAuthSession()
-  const questions = await api.question.getAll.query()
+  const questions = await api.question.getAll()
 
   return (
     <ListDetailView

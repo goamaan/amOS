@@ -1,5 +1,4 @@
 import { TitleBar } from "~/components/TitleBar"
-import { Editor } from "~/components/editor/editor"
 
 export function Intro() {
   return (

@@ -1,14 +1,6 @@
-import { Prisma } from "@prisma/client"
-import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { kebabCase } from "~/lib/utils"
 
-import {
-  adminProcedure,
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc"
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc"
 
 export const userRouter = createTRPCRouter({
   hasLikedEntry: protectedProcedure

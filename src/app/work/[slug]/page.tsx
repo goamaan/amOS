@@ -1,4 +1,3 @@
-import { unstable_noStore } from "next/cache"
 import { ListDetailView } from "~/app/layout"
 import { Post } from "~/components/Post/Post"
 import { PostsList } from "~/components/Post/PostsList"
@@ -10,10 +9,9 @@ export default async function WorkPost({
 }: {
   params: { slug: string }
 }) {
-  unstable_noStore()
   const session = await getServerAuthSession()
 
-  const posts = await api.post.getAll.query({ type: "work" })
+  const posts = await api.post.getAll({ type: "work" })
 
   return (
     <ListDetailView

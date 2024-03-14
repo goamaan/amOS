@@ -1,4 +1,3 @@
-import { unstable_noStore } from "next/cache"
 import { ListDetailView } from "~/app/layout"
 import { BookmarksList } from "~/components/Bookmark/BookmarkList"
 import { getServerAuthSession } from "~/server/auth"
@@ -9,10 +8,8 @@ export default async function Bookmarks({
 }: {
   params: { id: string }
 }) {
-  unstable_noStore()
-
   const session = await getServerAuthSession()
-  const bookmarks = await api.bookmark.getAll.query()
+  const bookmarks = await api.bookmark.getAll()
 
   return (
     <ListDetailView

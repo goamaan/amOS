@@ -17,7 +17,7 @@ export async function Post({
   slug: string
   user?: Session["user"]
 }) {
-  const post = await api.post.get.query({ slug })
+  const post = await api.post.get({ slug })
 
   return (
     <div className="relative flex max-h-screen w-full flex-col space-y-4 overflow-y-auto">
