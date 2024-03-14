@@ -6,6 +6,8 @@ import {
   MessageSquareMore,
   MessagesSquare,
   MoreHorizontal,
+  Twitter,
+  User,
 } from "lucide-react"
 import { signIn } from "next-auth/react"
 import { Button } from "~/components/ui/button"
@@ -25,13 +27,13 @@ export function SignInDialog({ trigger }: { trigger?: React.ReactNode }) {
       <DialogTrigger asChild>
         {trigger ?? (
           <Button className="m-4 flex gap-2">
-            <Github size={16} /> Sign in
+            <User size={16} /> Sign in
           </Button>
         )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Sign in with Github</DialogTitle>
+          <DialogTitle>Sign in with Twitter</DialogTitle>
         </DialogHeader>
         <div className="grid grid-flow-col grid-rows-2 gap-4">
           <Card>
@@ -59,12 +61,17 @@ export function SignInDialog({ trigger }: { trigger?: React.ReactNode }) {
             </CardHeader>
           </Card>
         </div>
-        <Button onClick={() => signIn("github")} className="m-4 flex gap-2">
-          <Github size={16} /> Sign in
-        </Button>
+        <div className="flex w-full items-center gap-2">
+          <Button
+            onClick={() => signIn("twitter")}
+            className="flex w-full gap-2 bg-blue-400 text-white hover:bg-blue-500"
+          >
+            <Twitter size={16} /> Sign in with Twitter
+          </Button>
+        </div>
         <DialogFooter className="text-xs text-muted-foreground">
           Delete your account any time. I will only request access to your
-          public Github information. You won&apos;t be subscribed to anything.
+          public Twitter information. You won&apos;t be subscribed to anything.
         </DialogFooter>
       </DialogContent>
     </Dialog>

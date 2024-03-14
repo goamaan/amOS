@@ -21,6 +21,8 @@ model Account {
     refresh_token            String?
     access_token             String?
     refresh_token_expires_in Int?
+    oauth_token              String?
+    oauth_token_secret       String?
     expires_at               Int?
     token_type               String?
     scope                    String?
@@ -42,9 +44,10 @@ model Session {
 model User {
     id            String    @id @default(cuid())
     name          String?
+    username      String?
     isAdmin       Boolean   @default(false)
     isBlocked     Boolean   @default(false)
-    email         String?   @unique
+    email         String?
     emailVerified DateTime?
     image         String?
 

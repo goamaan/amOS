@@ -257,12 +257,12 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
                       Logged in as
                     </p>
                     <p className="text-sm font-semibold text-muted-foreground">
-                      {user.name}
+                      {user.username}
                     </p>
                   </div>
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user.image ?? undefined} />
-                    <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{user.username?.charAt(0)}</AvatarFallback>
                   </Avatar>
                 </div>
               </DropdownMenuTrigger>

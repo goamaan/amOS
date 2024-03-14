@@ -5,7 +5,9 @@ import {
   type NextAuthOptions,
 } from "next-auth"
 import { type Adapter } from "next-auth/adapters"
-import GithubProvider from "next-auth/providers/github"
+import TwitterProvider, {
+  type TwitterProfile,
+} from "next-auth/providers/twitter"
 
 import { env } from "~/env"
 import { db } from "~/server/db"
@@ -21,15 +23,17 @@ declare module "next-auth" {
     user: {
       id: string
       isAdmin: boolean
+      username: string
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"]
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    username: string
+    // ...other properties
+    // role: UserRole;
+  }
 }
 
 /**
@@ -39,30 +43,36 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-        isAdmin: user.email === env.ADMIN_EMAIL,
-      },
-    }),
+    session: (data) => {
+      const { user, session } = data
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          username: user.username,
+          isAdmin: user.username === env.ADMIN_USERNAME,
+        },
+      }
+    },
   },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
-    GithubProvider({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
+    TwitterProvider({
+      clientId: env.TWITTER_CLIENT_ID,
+      clientSecret: env.TWITTER_CLIENT_SECRET,
+      version: "2.0",
+      profile: ({ data }: TwitterProfile) => {
+        return {
+          id: data.id,
+          name: data.name,
+          // NOTE: E-mail is currently unsupported by OAuth 2 Twitter.
+          email: null,
+          image: data.profile_image_url,
+          username: data.username,
+        }
+      },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
 }
 
