@@ -61,6 +61,11 @@ model User {
     stacks    Stack[]
 }
 
+model Intro {
+    id      String @id @default(cuid())
+    content String @unique
+}
+
 model Bookmark {
     id          String   @id @default(cuid())
     createdAt   DateTime @default(now())

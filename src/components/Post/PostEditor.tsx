@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type Post } from "@prisma/client"
-import { type Session } from "next-auth"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -35,13 +34,7 @@ const formSchema = z.object({
     }),
 })
 
-export function PostEditor({
-  post,
-  user,
-}: {
-  post: Post
-  user?: Session["user"]
-}) {
+export function PostEditor({ post }: { post: Post }) {
   const [content, setContent] = useState(post.content || JSON.stringify({}))
   const [featureImage, setFeatureImage] = useState(
     post.featureImage ?? undefined,
@@ -127,11 +120,7 @@ export function PostEditor({
             }}
           />
         </div>
-        <Editor
-          editable={user?.isAdmin}
-          content={content}
-          setContent={setContent}
-        />
+        <Editor editable content={content} setContent={setContent} />
         <div className="flex justify-end">
           <SubmitButton
             isPending={form.formState.isSubmitting}

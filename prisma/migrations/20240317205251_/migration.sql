@@ -8,6 +8,8 @@ CREATE TABLE "Account" (
     "refresh_token" TEXT,
     "access_token" TEXT,
     "refresh_token_expires_in" INTEGER,
+    "oauth_token" TEXT,
+    "oauth_token_secret" TEXT,
     "expires_at" INTEGER,
     "token_type" TEXT,
     "scope" TEXT,
@@ -29,6 +31,7 @@ CREATE TABLE "Session" (
 CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT,
+    "username" TEXT,
     "isAdmin" BOOLEAN NOT NULL DEFAULT false,
     "isBlocked" BOOLEAN NOT NULL DEFAULT false,
     "email" TEXT,
@@ -37,14 +40,20 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "Intro" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "content" TEXT NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "Bookmark" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
+    "host" TEXT NOT NULL,
     "url" TEXT NOT NULL,
-    "title" TEXT,
-    "image" TEXT,
-    "description" TEXT,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "faviconUrl" TEXT,
     "tagId" TEXT NOT NULL,
     CONSTRAINT "Bookmark_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "BookmarkTag" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -62,7 +71,7 @@ CREATE TABLE "Question" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     "title" TEXT NOT NULL,
-    "description" TEXT,
+    "description" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     CONSTRAINT "Question_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -127,7 +136,6 @@ CREATE TABLE "Reaction" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" TEXT NOT NULL,
-    "commentId" TEXT,
     "bookmarkId" TEXT,
     "questionId" TEXT,
     "postId" TEXT,
@@ -161,7 +169,7 @@ CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provi
 CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "Intro_content_key" ON "Intro"("content");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Bookmark_url_key" ON "Bookmark"("url");
@@ -198,9 +206,6 @@ CREATE INDEX "Stack_tagId_idx" ON "Stack"("tagId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "StackTag_name_key" ON "StackTag"("name");
-
--- CreateIndex
-CREATE INDEX "Reaction_commentId_idx" ON "Reaction"("commentId");
 
 -- CreateIndex
 CREATE INDEX "Reaction_bookmarkId_idx" ON "Reaction"("bookmarkId");

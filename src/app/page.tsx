@@ -1,6 +1,14 @@
 import { ListDetailView } from "~/app/layout"
 import { Intro } from "~/components/Intro"
+import { getServerAuthSession } from "~/server/auth"
 
 export default async function Home() {
-  return <ListDetailView list={null} hasDetail detail={<Intro />} />
+  const session = await getServerAuthSession()
+  return (
+    <ListDetailView
+      list={null}
+      hasDetail
+      detail={<Intro user={session?.user} />}
+    />
+  )
 }

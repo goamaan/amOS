@@ -108,6 +108,6 @@
     "initVersion": "7.27.0"
   },
   "prisma": {
-    "seed": "bun prisma/seed.ts"
+    "seed": "bun --env-file=.env prisma/seed.ts"
   }
 }

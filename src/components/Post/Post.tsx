@@ -36,11 +36,7 @@ export async function Post({
             ))}
           {user?.isAdmin && <DeletePost id={post.id} />}
         </div>
-        {user?.isAdmin ? (
-          <PostEditor post={post} user={user} />
-        ) : (
-          <PostView post={post} />
-        )}
+        {user?.isAdmin ? <PostEditor post={post} /> : <PostView post={post} />}
         <div className="pt-8">
           <CommentList id={post.id} type="post" user={user} />
           {user && <AddComment id={post.id} type="post" />}
