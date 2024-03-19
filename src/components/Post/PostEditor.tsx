@@ -56,9 +56,10 @@ export function PostEditor({ post }: { post: Post }) {
         onError(error) {
           toast.error(error.message)
         },
-        onSuccess() {
+        onSuccess(data) {
           toast.success("Post updated")
           router.refresh()
+          router.push(`/${data?.type}/${data?.slug}`)
         },
       },
     )

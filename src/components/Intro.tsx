@@ -1,6 +1,7 @@
 import { MapPin } from "lucide-react"
 import { type Session } from "next-auth"
 import Image from "next/image"
+import { DotBackground } from "~/components/DotBackground"
 import { IntroEditor } from "~/components/Intro/IntroEditor"
 import { TitleBar } from "~/components/TitleBar"
 import { Editor } from "~/components/editor/editor"
@@ -38,9 +39,13 @@ function TableRow({ href, title, subtitle, date }: TableRowProps) {
         {title}
       </strong>
       <span className="w-full shrink border-t border-dashed border-gray-300 dark:border-gray-800" />
-      {subtitle && <span className="text-tertiary flex-none">{subtitle}</span>}
+      {subtitle && (
+        <span className="flex-none text-muted-foreground">{subtitle}</span>
+      )}
       {date && (
-        <span className="text-quaternary flex-none font-mono">{date}</span>
+        <span className="flex-none font-mono text-muted-foreground/60">
+          {date}
+        </span>
       )}
     </a>
   )
@@ -92,90 +97,80 @@ export async function Intro({ user }: { user?: Session["user"] }) {
   const intro = await api.user.getIntro()
 
   return (
-    <div className="relative flex max-h-screen w-full flex-col overflow-y-auto">
-      <TitleBar hasBgColor={false} title="About me" />
-      <div className="mx-auto w-full max-w-3xl px-4 py-12 pb-10 md:px-8">
-        <SectionContainer>
-          <SectionTitle />
-          {user?.isAdmin ? (
-            <IntroEditor intro={intro} />
-          ) : (
-            <div className="col-span-10">
-              <Editor content={intro.content} />
-            </div>
-          )}
-        </SectionContainer>
-      </div>
-      <div className="mx-auto flex w-full max-w-3xl flex-col space-y-8 px-4 py-12 pb-24 md:space-y-16 md:px-8">
-        <SectionContainer>
-          <SectionTitle>Online</SectionTitle>
-          <SectionContent>
-            <div className="flex flex-col space-y-3">
-              <TableRow
-                href={"/twitter"}
-                title={"Twitter"}
-                subtitle={"Follow"}
-                date={""}
-              />
-              <TableRow
-                href={"/youtube"}
-                title={"YouTube"}
-                subtitle={"Subscribe"}
-                date={""}
-              />
-              <TableRow
-                href={"/github"}
-                title={"GitHub"}
-                subtitle={"Follow"}
-                date={""}
-              />
-              <TableRow
-                href={"/figma"}
-                title={"Figma"}
-                subtitle={"Follow"}
-                date={""}
-              />
-            </div>
-          </SectionContent>
-        </SectionContainer>
-
-        <SectionContainer>
-          <SectionTitle>Where</SectionTitle>
-          <SectionContent>
-            <Image
-              priority
-              src="/static/img/sf.png"
-              width={800}
-              height={400}
-              layout="responsive"
-              className="rounded-2xl"
-              quality={100}
-              alt="Map of Vancouver with blue location dot in the middle"
-            />
-            <p className="text-quaternary flex items-center justify-end space-x-2 pt-2 text-sm md:text-right">
-              <MapPin size={12} />
-              <span>Vancouver, BC</span>
-            </p>
-          </SectionContent>
-        </SectionContainer>
-
-        <SectionContainer>
-          <SectionTitle>Work</SectionTitle>
-          <SectionContent>
-            <div className="flex flex-col space-y-3">
-              {workHistory.map((job) => (
+    <DotBackground>
+      <div className="relative flex max-h-screen w-full flex-col overflow-y-auto">
+        <TitleBar hasBgColor={false} title="About me" />
+        <div className="mx-auto w-full max-w-3xl px-4 py-12 pb-10 md:px-8">
+          <SectionContainer>
+            <SectionTitle />
+            {user?.isAdmin ? (
+              <IntroEditor intro={intro} />
+            ) : (
+              <div className="col-span-10">
+                <Editor content={intro.content} />
+              </div>
+            )}
+          </SectionContainer>
+        </div>
+        <div className="mx-auto flex w-full max-w-3xl flex-col space-y-8 px-4 py-12 pb-24 md:space-y-16 md:px-8">
+          <SectionContainer>
+            <SectionTitle>Online</SectionTitle>
+            <SectionContent>
+              <div className="flex flex-col space-y-3">
                 <TableRow
-                  href={job.href}
-                  title={job.title}
-                  subtitle={job.subtitle}
-                  date={job.date}
-                  key={job.href}
+                  href={"https://twitter.com/goamaan"}
+                  title={"Twitter"}
+                  subtitle={"Follow"}
+                  date={""}
                 />
-              ))}
-            </div>
-          </SectionContent>
-        </SectionContainer>
+                <TableRow
+                  href={"https://github.com/goamaan"}
+                  title={"GitHub"}
+                  subtitle={"Follow"}
+                  date={""}
+                />
+              </div>
+            </SectionContent>
+          </SectionContainer>
+
+          <SectionContainer>
+            <SectionTitle>Where</SectionTitle>
+            <SectionContent>
+              <Image
+                priority
+                src="/static/vancouver.png"
+                width={800}
+                height={400}
+                layout="responsive"
+                className="rounded-2xl"
+                quality={100}
+                alt="Map of Vancouver with blue location dot in the middle"
+              />
+              <p className="text-quaternary flex items-center justify-end space-x-2 pt-2 text-sm md:text-right">
+                <MapPin size={12} />
+                <span>Vancouver, BC</span>
+              </p>
+            </SectionContent>
+          </SectionContainer>
+
+          <SectionContainer>
+            <SectionTitle>Work</SectionTitle>
+            <SectionContent>
+              <div className="flex flex-col space-y-3">
+                {workHistory.map((job) => (
+                  <TableRow
+                    href={job.href}
+                    title={job.title}
+                    subtitle={job.subtitle}
+                    date={job.date}
+                    key={job.href}
+                  />
+                ))}
+              </div>
+            </SectionContent>
+          </SectionContainer>
+        </div>
       </div>
-    </div>
+    </DotBackground>
   )
 }

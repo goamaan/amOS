@@ -65,6 +65,7 @@ export const postRouter = createTRPCRouter({
             title,
             content,
             featureImage,
+            slug: kebabCase(title),
           },
         })
       } catch (error) {

@@ -77,7 +77,7 @@ export function AddStackForm() {
         onSuccess(data) {
           toast.success("Stack item created")
           router.refresh()
-          router.push(`/stack/${data?.id}`)
+          router.push(`/stack/${data?.slug}`)
         },
       },
     )

@@ -146,13 +146,13 @@ export const stackRouter = createTRPCRouter({
     .input(z.object({ id: z.string().min(1) }))
     .mutation(async ({ ctx, input: { id } }) => {
       try {
-        return ctx.db.bookmark.delete({ where: { id } })
+        return ctx.db.stack.delete({ where: { id } })
       } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError) {
           if (e.code === "P2025") {
             throw new TRPCError({
               code: "NOT_FOUND",
-              cause: "Bookmark not found",
+              cause: "Stack not found",
             })
           }
         }

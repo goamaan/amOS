@@ -30,8 +30,8 @@ export function TitleBar({
       <div
         className={cn(
           "h-12 min-h-12",
-          hasBgColor && "bg-secondary/40",
-          `sticky top-0 z-10 flex w-full flex-col justify-center px-3 py-2 backdrop-blur-lg`,
+          hasBgColor && "bg-secondary/30",
+          `sticky top-0 z-10 flex w-full flex-col justify-center px-3 py-2 backdrop-blur-md`,
         )}
       >
         <div className="flex flex-none items-center justify-between">

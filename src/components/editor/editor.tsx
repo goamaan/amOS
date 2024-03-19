@@ -44,13 +44,13 @@ export const Editor = ({
           initialContent={JSON.parse(content) as JSONContent}
           extensions={extensions}
           className={cn(
-            "relative min-h-16 w-full max-w-screen-lg rounded-md bg-background p-1",
+            "relative min-h-16 w-full max-w-screen-lg rounded-md bg-transparent p-1",
             editable && "border p-2",
           )}
           editorProps={{
             ...defaultEditorProps,
             attributes: {
-              class: `prose-lg prose-stone dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
+              class: `prose prose-stone dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
             },
           }}
           editable={editable}
