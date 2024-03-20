@@ -6,7 +6,7 @@ const ProgressProvider = () => {
   return (
     <ProgressBar
       height="3px"
-      color="#de6e18"
+      color="#0DE0F8"
       options={{ showSpinner: false }}
       shallowRouting
       delay={500}

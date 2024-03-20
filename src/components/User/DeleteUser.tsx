@@ -35,12 +35,8 @@ export function DeleteUser({ id }: { id: string }) {
         toast.error(error.message)
       },
       async onSuccess() {
-        toast.success("Deleted your account", {
-          description: "You will be logged out now",
-        })
-        await signOut()
+        router.push("/")
         router.refresh()
-        router.push(`/`)
       },
     })
   }

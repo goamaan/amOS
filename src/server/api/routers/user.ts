@@ -79,7 +79,7 @@ export const userRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.string().min(1) }))
     .mutation(async ({ ctx, input: { id } }) => {
-      const user = await ctx.db.user.delete({ where: { id } })
+      const user = await ctx.db.user.findUnique({ where: { id } })
       if (!user) {
         throw new TRPCError({ code: "NOT_FOUND", cause: "User not found" })
       }

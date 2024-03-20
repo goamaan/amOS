@@ -70,7 +70,10 @@ export async function PostsList({
                   />
                 )}
                 <div className="flex w-full flex-col items-start py-7">
-                  <p className="">{p.title}</p>
+                  <p className="">
+                    {p.title.substring(0, 40) +
+                      (p.title.length > 30 ? "..." : "")}
+                  </p>
                   <p className="justify-start text-sm text-muted-foreground">
                     {p.publishedAt?.toDateString() ??
                       p.updatedAt.toDateString()}

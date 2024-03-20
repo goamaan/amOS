@@ -21,7 +21,7 @@ export async function Music() {
             <p className="text-sm font-light text-muted-foreground">
               Powered by{" "}
               <a
-                className="prose text-primary"
+                className="prose font-semibold text-accent"
                 target="_blank"
                 rel="noopener noreferrer"
                 href="https://last.fm"
@@ -78,7 +78,7 @@ export async function Music() {
             )}
           </div>
           <div className="flex flex-wrap justify-evenly gap-2">
-            <div className="mx-auto flex w-72 flex-grow flex-col space-y-2 rounded-lg border p-4">
+            <div className="mx-auto flex w-72 flex-grow flex-col space-y-2 rounded-lg p-4 ">
               <div className="flex flex-col gap-0.5">
                 <h2 className="text-lg font-semibold">Last few songs played</h2>
                 <p className="text-sm font-light text-muted-foreground">
@@ -88,7 +88,7 @@ export async function Music() {
               </div>
               {tracks.slice(1).map((t) => (
                 <div key={t.name}>
-                  <div className="flex w-full justify-between rounded-lg border bg-secondary/60 p-4">
+                  <div className="flex w-full justify-between rounded-lg border bg-secondary/60 p-4 ">
                     <Image
                       src={t.image.at(3)?.["#text"] ?? ""}
                       alt={t.name}
@@ -122,7 +122,7 @@ export async function Music() {
                 </div>
               ))}
             </div>
-            <div className="mx-auto flex w-72 flex-grow flex-col space-y-2 rounded-lg border p-4">
+            <div className="mx-auto flex w-72 flex-grow flex-col space-y-2 rounded-lg p-4 ">
               <div className="flex flex-col gap-0.5">
                 <h2 className="text-lg font-semibold">Top tracks</h2>
                 <p className="text-sm font-light text-muted-foreground">
@@ -165,7 +165,7 @@ export async function Music() {
                 </div>
               ))}
             </div>
-            <div className="mx-auto flex w-72 flex-grow flex-col space-y-2 rounded-lg border p-4">
+            <div className="mx-auto flex w-72 flex-grow flex-col space-y-2 rounded-lg p-4 ">
               <div className="flex flex-col gap-0.5">
                 <h2 className="text-lg font-semibold">Top artists</h2>
                 <p className="text-sm font-light text-muted-foreground">

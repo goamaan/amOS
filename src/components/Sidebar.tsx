@@ -223,8 +223,9 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
         <div className="flex h-screen flex-col justify-between">
           <div className="flex flex-col">
             <TitleBar
+              isMain
               hasBgColor={false}
-              title="Amaan Gokak"
+              title="amaan gokak"
               trailingAccessory={
                 <div className="flex gap-1">
                   <ThemeToggle />
@@ -268,7 +269,7 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
                                 className={cn(
                                   "flex w-full justify-between gap-2",
                                   isActive &&
-                                    "animate-shimmer bg-[linear-gradient(120deg,#fffcfc,40%,#ffa342,55%,#fffcfc)] bg-[length:200%_100%] transition-colors dark:bg-[linear-gradient(120deg,#0f0d0b,40%,#803803,45%,#0f0d0b)]",
+                                    "animate-shimmer bg-[linear-gradient(120deg,#fffcfc,40%,#0DE0F8,55%,#fffcfc)] bg-[length:200%_100%] transition-colors dark:bg-[linear-gradient(120deg,#0f0d0b,40%,#0DE0F8,45%,#0f0d0b)]",
                                 )}
                                 size={"sm"}
                               >
