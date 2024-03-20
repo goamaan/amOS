@@ -5,6 +5,7 @@ const config = {
     project: true,
   },
   plugins: ["@typescript-eslint"],
+  ignorePatterns: ["**/tailwind.config.ts"],
   extends: [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended-type-checked",
@@ -32,6 +33,6 @@ const config = {
       },
     ],
   },
-};
+}
 
-module.exports = config;
+module.exports = config
