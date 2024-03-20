@@ -249,41 +249,42 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
                           label,
                           trailingAccessory: Accessory,
                           isActive,
-                          trigger,
                         }) => (
                           <li
                             className="flex space-x-1"
                             onClick={() => setIsOpen(false)}
                             key={href}
                           >
-                            {trigger ?? (
-                              <Link
-                                href={href}
-                                className="w-full"
-                                target={isExternal ? "_blank" : undefined}
-                                rel={
-                                  isExternal ? "noopener noreferrer" : undefined
-                                }
+                            <Link
+                              href={href}
+                              className="w-full"
+                              target={isExternal ? "_blank" : undefined}
+                              rel={
+                                isExternal ? "noopener noreferrer" : undefined
+                              }
+                            >
+                              <Button
+                                variant={isActive ? "secondary" : "ghost"}
+                                className={cn(
+                                  "flex w-full justify-between gap-2",
+                                  isActive &&
+                                    "animate-shimmer bg-[linear-gradient(120deg,#fffcfc,40%,#ffa342,55%,#fffcfc)] bg-[length:200%_100%] transition-colors dark:bg-[linear-gradient(120deg,#0f0d0b,40%,#803803,45%,#0f0d0b)]",
+                                )}
+                                size={"sm"}
                               >
-                                <Button
-                                  variant={isActive ? "secondary" : "ghost"}
-                                  className="flex w-full justify-between gap-2"
-                                  size={"sm"}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <span className="flex w-4 items-center justify-center">
-                                      {Icon}
-                                    </span>
-                                    {label}
-                                  </div>
-                                  {Accessory && (
-                                    <span className="flex w-4 items-center justify-center text-black text-opacity-40 dark:text-white">
-                                      <Accessory />
-                                    </span>
-                                  )}
-                                </Button>
-                              </Link>
-                            )}
+                                <div className="flex items-center gap-2">
+                                  <span className="flex w-4 items-center justify-center">
+                                    {Icon}
+                                  </span>
+                                  {label}
+                                </div>
+                                {Accessory && (
+                                  <span className="flex w-4 items-center justify-center text-black text-opacity-40 dark:text-white">
+                                    <Accessory />
+                                  </span>
+                                )}
+                              </Button>
+                            </Link>
                           </li>
                         ),
                       )}

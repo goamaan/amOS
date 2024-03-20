@@ -87,7 +87,7 @@ module.exports = withUt({
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        shimmer: "shimmer 3s linear infinite",
+        shimmer: "shimmer 4s linear infinite",
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
