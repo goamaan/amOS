@@ -1,5 +1,6 @@
 import { bookmarkRouter } from "~/server/api/routers/bookmark"
 import { commentRouter } from "~/server/api/routers/comment"
+import { musicRouter } from "~/server/api/routers/music"
 import { postRouter } from "~/server/api/routers/post"
 import { questionRouter } from "~/server/api/routers/question"
 import { reactionRouter } from "~/server/api/routers/reaction"
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   bookmark: bookmarkRouter,
   question: questionRouter,
   stack: stackRouter,
+  music: musicRouter,
 })
 
 // export type definition of API

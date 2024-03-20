@@ -30,6 +30,7 @@ export const env = createEnv({
     ),
     TWITTER_CLIENT_ID: z.string(),
     TWITTER_CLIENT_SECRET: z.string(),
+    LASTFM_API_KEY: z.string(),
     ADMIN_USERNAME: z.string().min(1),
   },
 
@@ -54,6 +55,7 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     TWITTER_CLIENT_ID: process.env.TWITTER_CLIENT_ID,
     TWITTER_CLIENT_SECRET: process.env.TWITTER_CLIENT_SECRET,
+    LASTFM_API_KEY: process.env.LASTFM_API_KEY,
     ADMIN_USERNAME: process.env.ADMIN_USERNAME,
   },
   /**

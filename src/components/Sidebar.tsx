@@ -7,6 +7,7 @@ import {
   FileCode,
   Gamepad2,
   Github,
+  Headphones,
   Home,
   Layers,
   Mail,
@@ -38,7 +39,18 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
   const { isOpen, setIsOpen } = useGlobalNavigation()
   const pathname = usePathname()
 
-  const sections = [
+  const sections: {
+    label: string | null
+    items: {
+      href: string
+      label: string
+      icon: JSX.Element
+      trailingAccessory: JSX.ElementType | null
+      isActive: boolean
+      isExternal: boolean
+      trigger?: React.ReactNode
+    }[]
+  }[] = [
     {
       label: null,
       items: [
@@ -67,7 +79,7 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           href: "/work",
           label: "Work",
           icon: <Briefcase />,
-          trailingAccesory: null,
+          trailingAccessory: null,
           isActive: pathname.indexOf("/work") >= 0,
           isExternal: false,
         },
@@ -96,6 +108,37 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
           trailingAccessory: null,
           isActive: pathname.indexOf("/stack") >= 0,
           isExternal: false,
+        },
+        {
+          href: "/music",
+          label: "Music",
+          icon: <Headphones />,
+          trailingAccessory: null,
+          isActive: pathname.indexOf("/music") >= 0,
+          isExternal: false,
+          trigger: (
+            <Link href={"/music"} className="w-full">
+              <Button
+                variant={
+                  pathname.indexOf("/music") >= 0 ? "secondary" : "ghost"
+                }
+                className={cn(
+                  "flex w-full animate-shimmer justify-between gap-2 bg-[length:200%_100%] transition-colors",
+                  pathname.indexOf("/music") >= 0
+                    ? "bg-[linear-gradient(120deg,#fffcfc,40%,#ffa342,55%,#fffcfc)] dark:bg-[linear-gradient(120deg,#0f0d0b,40%,#803803,45%,#0f0d0b)]"
+                    : "bg-[linear-gradient(120deg,#fffcfc,40%,#f2c28f,55%,#fffcfc)] dark:bg-[linear-gradient(120deg,#0f0d0b,40%,#301a03,55%,#0f0d0b)]",
+                )}
+                size={"sm"}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="flex w-4 items-center justify-center">
+                    <Headphones />
+                  </span>
+                  Music
+                </div>
+              </Button>
+            </Link>
+          ),
         },
       ],
     },
@@ -206,38 +249,41 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
                           label,
                           trailingAccessory: Accessory,
                           isActive,
+                          trigger,
                         }) => (
                           <li
                             className="flex space-x-1"
                             onClick={() => setIsOpen(false)}
                             key={href}
                           >
-                            <Link
-                              href={href}
-                              className="w-full"
-                              target={isExternal ? "_blank" : undefined}
-                              rel={
-                                isExternal ? "noopener noreferrer" : undefined
-                              }
-                            >
-                              <Button
-                                variant={isActive ? "secondary" : "ghost"}
-                                className="flex w-full justify-between gap-2"
-                                size={"sm"}
+                            {trigger ?? (
+                              <Link
+                                href={href}
+                                className="w-full"
+                                target={isExternal ? "_blank" : undefined}
+                                rel={
+                                  isExternal ? "noopener noreferrer" : undefined
+                                }
                               >
-                                <div className="flex items-center gap-2">
-                                  <span className="flex w-4 items-center justify-center">
-                                    {Icon}
-                                  </span>
-                                  {label}
-                                </div>
-                                {Accessory && (
-                                  <span className="flex w-4 items-center justify-center text-black text-opacity-40 dark:text-white">
-                                    <Accessory />
-                                  </span>
-                                )}
-                              </Button>
-                            </Link>
+                                <Button
+                                  variant={isActive ? "secondary" : "ghost"}
+                                  className="flex w-full justify-between gap-2"
+                                  size={"sm"}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="flex w-4 items-center justify-center">
+                                      {Icon}
+                                    </span>
+                                    {label}
+                                  </div>
+                                  {Accessory && (
+                                    <span className="flex w-4 items-center justify-center text-black text-opacity-40 dark:text-white">
+                                      <Accessory />
+                                    </span>
+                                  )}
+                                </Button>
+                              </Link>
+                            )}
                           </li>
                         ),
                       )}
@@ -268,7 +314,7 @@ export function Sidebar({ user }: { user?: Session["user"] }) {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">Profile</Link>
+                  <Link href={`/profile/${user.id}`}>Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => signOut()}>
                   Sign out

@@ -129,6 +129,14 @@ export async function Intro({ user }: { user?: Session["user"] }) {
                   subtitle={"Follow"}
                   date={""}
                 />
+                <TableRow
+                  href={
+                    "https://open.spotify.com/user/amaangokak1807?si=b8774ea04ede40d0"
+                  }
+                  title={"Spotify"}
+                  subtitle={"Follow"}
+                  date={""}
+                />
               </div>
             </SectionContent>
           </SectionContainer>

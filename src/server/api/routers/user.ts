@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 
 import {
@@ -65,5 +66,27 @@ export const userRouter = createTRPCRouter({
           })
       }
       return !!like
+    }),
+  get: publicProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .query(async ({ ctx, input: { id } }) => {
+      const user = await ctx.db.user.findUnique({ where: { id } })
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", cause: "User not found" })
+      }
+      return user
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .mutation(async ({ ctx, input: { id } }) => {
+      const user = await ctx.db.user.delete({ where: { id } })
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", cause: "User not found" })
+      }
+      if (user.id !== ctx.session.user.id) {
+        throw new TRPCError({ code: "UNAUTHORIZED", cause: "Unauthorized" })
+      }
+
+      await ctx.db.user.delete({ where: { id } })
     }),
 })
