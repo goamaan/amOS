@@ -3,6 +3,8 @@
 import { MessageCircle } from "lucide-react"
 import { type Session } from "next-auth"
 import { Comment } from "~/components/Comment/Comment"
+import { SignInDialog } from "~/components/SignInDialog"
+import { Button } from "~/components/ui/button"
 import { Spinner } from "~/components/ui/spinner"
 import { api } from "~/trpc/react"
 
@@ -46,6 +48,19 @@ export function CommentList({
             data.map((comment) => (
               <Comment key={comment.id} comment={comment} user={user} />
             ))}
+          {!user && (
+            <SignInDialog
+              trigger={
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-fit self-center"
+                >
+                  Sign in to comment
+                </Button>
+              }
+            />
+          )}
           {data.length === 0 && (
             <p className="text-quaternary block text-center">
               No comments yet...
