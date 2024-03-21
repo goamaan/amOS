@@ -1,10 +1,14 @@
-import { type PostTag, type Post } from "@prisma/client"
+import { type Post, type PostTag } from "@prisma/client"
 import { Plus, Tag } from "lucide-react"
 import { type Session } from "next-auth"
+import Image from "next/image"
 import Link from "next/link"
+import { FilterMenu } from "~/components/FilterMenu"
 import { ListContainer } from "~/components/ListContainer"
-import { TitleBar } from "~/components/TitleBar"
 import { AddPostForm } from "~/components/Post/AddPost"
+import { PostTags } from "~/components/Post/PostTags"
+import { TitleBar } from "~/components/TitleBar"
+import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button"
 import {
   Dialog,
@@ -13,9 +17,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog"
-import Image from "next/image"
-import { PostTags } from "~/components/Post/PostTags"
-import { Badge } from "~/components/ui/badge"
 
 function AddPostDialog({ type }: { type: "writing" | "work" }) {
   return (
@@ -57,28 +58,44 @@ export async function PostsList({
   user,
   posts,
   type,
+  filters,
+  currentFilter,
 }: {
   params: { slug: string }
+  currentFilter?: string
+  filters: string[]
   user?: Session["user"]
   type: "writing" | "work"
   posts: (Post & { postTag: PostTag })[]
 }) {
+  const filtered = posts.filter((p) =>
+    currentFilter ? p.postTag.name === currentFilter : true,
+  )
+
   return (
     <ListContainer>
       <TitleBar
         hasBgColor
         title={type === "writing" ? "Writing" : "Work"}
         trailingAccessory={
-          user?.isAdmin ? (
-            <div className="flex gap-1">
-              <AddPostTagDialog />
-              <AddPostDialog type={type} />{" "}
-            </div>
-          ) : null
+          <div className="flex gap-1">
+            <FilterMenu filters={filters} currentFilter={currentFilter} />
+            {user?.isAdmin && (
+              <>
+                <AddPostTagDialog />
+                <AddPostDialog type={type} />{" "}
+              </>
+            )}
+          </div>
         }
       />
       <div className="flex flex-col items-start gap-2 p-2 text-start">
-        {posts.map((p) => {
+        {filtered.length === 0 && (
+          <div className="flex self-center">
+            <p className="text-sm text-muted-foreground">No results :{"("}</p>
+          </div>
+        )}
+        {filtered.map((p) => {
           const active = params.slug === p.slug
           return (
             <Link key={p.id} href={`/${type}/${p.slug}`} className="w-full">

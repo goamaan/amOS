@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { AddBookmarkForm } from "~/components/Bookmark/AddBookmark"
 import { BookmarkTags } from "~/components/Bookmark/BookmarkTags"
+import { FilterMenu } from "~/components/FilterMenu"
 import { ListContainer } from "~/components/ListContainer"
 import { TitleBar } from "~/components/TitleBar"
 import { Badge } from "~/components/ui/badge"
@@ -57,27 +58,43 @@ export async function BookmarksList({
   params,
   user,
   bookmarks,
+  filters,
+  currentFilter,
 }: {
   params: { id: string }
   user?: Session["user"]
+  currentFilter?: string
+  filters: string[]
   bookmarks: (Bookmark & { tag: BookmarkTag })[]
 }) {
+  const filtered = bookmarks.filter((p) =>
+    currentFilter ? p.tag.name === currentFilter : true,
+  )
+
   return (
     <ListContainer>
       <TitleBar
         hasBgColor
         title={"Bookmarks"}
         trailingAccessory={
-          user?.isAdmin ? (
-            <div className="flex gap-1">
-              <AddBookmarkTagDialog />
-              <AddBookmarkDialog />
-            </div>
-          ) : null
+          <div className="flex gap-1">
+            <FilterMenu filters={filters} currentFilter={currentFilter} />
+            {user?.isAdmin && (
+              <>
+                <AddBookmarkTagDialog />
+                <AddBookmarkDialog />
+              </>
+            )}
+          </div>
         }
       />
       <div className="flex flex-col items-start gap-2 p-2 text-start">
-        {bookmarks.map((p) => {
+        {filtered.length === 0 && (
+          <div className="flex self-center">
+            <p className="text-sm text-muted-foreground">No results :{"("}</p>
+          </div>
+        )}
+        {filtered.map((p) => {
           const active = params.id === p.id
           return (
             <Link key={p.id} href={`/bookmarks/${p.id}`} className="w-full">

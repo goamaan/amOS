@@ -3,6 +3,7 @@ import { Plus, Tag } from "lucide-react"
 import { type Session } from "next-auth"
 import Image from "next/image"
 import Link from "next/link"
+import { FilterMenu } from "~/components/FilterMenu"
 import { ListContainer } from "~/components/ListContainer"
 import { AddStackForm } from "~/components/Stack/AddStack"
 import { StackTags } from "~/components/Stack/StackTags"
@@ -57,27 +58,43 @@ export async function StackList({
   params,
   user,
   stacks,
+  filters,
+  currentFilter,
 }: {
   params: { slug: string }
   user?: Session["user"]
   stacks: (Stack & { tag: StackTag })[]
+  currentFilter?: string
+  filters: string[]
 }) {
+  const filtered = stacks.filter((p) =>
+    currentFilter ? p.tag.name === currentFilter : true,
+  )
+
   return (
     <ListContainer>
       <TitleBar
         hasBgColor
         title={"Stack"}
         trailingAccessory={
-          user?.isAdmin ? (
-            <div className="flex gap-1">
-              <AddStackTagDialog />
-              <AddStackDialog />
-            </div>
-          ) : null
+          <div className="flex gap-1">
+            <FilterMenu filters={filters} currentFilter={currentFilter} />
+            {user?.isAdmin && (
+              <>
+                <AddStackTagDialog />
+                <AddStackDialog />
+              </>
+            )}
+          </div>
         }
       />
       <div className="flex flex-col items-start gap-2 p-2 text-start">
-        {stacks.map((p) => {
+        {filtered.length === 0 && (
+          <div className="flex self-center">
+            <p className="text-sm text-muted-foreground">No results :{"("}</p>
+          </div>
+        )}
+        {filtered.map((p) => {
           const active = params.slug === p.slug
           return (
             <Link key={p.id} href={`/stack/${p.slug}`} className="w-full">

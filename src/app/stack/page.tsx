@@ -3,13 +3,29 @@ import { StackList } from "~/components/Stack/StackList"
 import { getServerAuthSession } from "~/server/auth"
 import { api } from "~/trpc/server"
 
-export default async function Stack({ params }: { params: { slug: string } }) {
+export default async function Stack({
+  params,
+  searchParams,
+}: {
+  params: { slug: string }
+  searchParams: Record<string, string | undefined>
+}) {
   const session = await getServerAuthSession()
   const stacks = await api.stack.getAll()
+  const tags = await api.stack.getTags()
+  const filter = searchParams.filter ?? undefined
 
   return (
     <ListDetailView
-      list={<StackList stacks={stacks} params={params} user={session?.user} />}
+      list={
+        <StackList
+          stacks={stacks}
+          params={params}
+          user={session?.user}
+          filters={tags.map((tag) => tag.name)}
+          currentFilter={filter}
+        />
+      }
       hasDetail={false}
       detail={null}
     />

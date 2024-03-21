@@ -1,7 +1,6 @@
 "use client" // Error components must be Client Components
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { Button } from "~/components/ui/button"
 
