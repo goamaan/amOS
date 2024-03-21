@@ -118,6 +118,12 @@ export async function Intro({ user }: { user?: Session["user"] }) {
             <SectionContent>
               <div className="flex flex-col space-y-3">
                 <TableRow
+                  href={"https://linkedin.com/in/amaangokak18"}
+                  title={"LinkedIn"}
+                  subtitle={"Connect"}
+                  date={""}
+                />
+                <TableRow
                   href={"https://twitter.com/goamaan"}
                   title={"Twitter"}
                   subtitle={"Follow"}
