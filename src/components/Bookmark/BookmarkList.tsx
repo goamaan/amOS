@@ -1,4 +1,4 @@
-import { type Bookmark } from "@prisma/client"
+import { type BookmarkTag, type Bookmark } from "@prisma/client"
 import { ExternalLink, Plus, Tag } from "lucide-react"
 import { type Session } from "next-auth"
 import Image from "next/image"
@@ -7,6 +7,7 @@ import { AddBookmarkForm } from "~/components/Bookmark/AddBookmark"
 import { BookmarkTags } from "~/components/Bookmark/BookmarkTags"
 import { ListContainer } from "~/components/ListContainer"
 import { TitleBar } from "~/components/TitleBar"
+import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button"
 import {
   Dialog,
@@ -59,7 +60,7 @@ export async function BookmarksList({
 }: {
   params: { id: string }
   user?: Session["user"]
-  bookmarks: Bookmark[]
+  bookmarks: (Bookmark & { tag: BookmarkTag })[]
 }) {
   return (
     <ListContainer>
@@ -84,7 +85,12 @@ export async function BookmarksList({
                 variant={active ? "secondary" : "ghost"}
                 className="flex w-full flex-col items-start py-7"
               >
-                <p className="">{p.title}</p>
+                <div className="flex w-full items-center justify-between">
+                  <p className="">{p.title}</p>
+                  <Badge className="flex items-center gap-1 text-xs">
+                    <Tag size={12} /> {p.tag.name}
+                  </Badge>
+                </div>
                 <div className="flex items-center gap-2">
                   {p.faviconUrl ? (
                     <Image
@@ -96,9 +102,7 @@ export async function BookmarksList({
                   ) : (
                     <ExternalLink size={14} />
                   )}
-                  <p className="justify-start text-sm text-muted-foreground">
-                    {p.url}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{p.url}</p>
                 </div>
               </Button>
             </Link>

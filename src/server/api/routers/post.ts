@@ -15,9 +15,10 @@ export const postRouter = createTRPCRouter({
       z.object({
         title: z.string().min(1),
         type: z.enum(["work", "writing"]),
+        tagId: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input: { title, type } }) => {
+    .mutation(async ({ ctx, input: { title, type, tagId } }) => {
       const post = await ctx.db.post.create({
         data: {
           title,
@@ -25,6 +26,7 @@ export const postRouter = createTRPCRouter({
           slug: kebabCase(title),
           userId: ctx.session.user.id,
           type,
+          postTagId: tagId,
         },
       })
 
@@ -53,66 +55,51 @@ export const postRouter = createTRPCRouter({
         title: z.string().min(2),
         content: z.string(),
         featureImage: z.string().optional(),
+        tagId: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input: { id, title, content, featureImage } }) => {
-      try {
-        return ctx.db.post.update({
-          where: {
-            id,
-          },
-          data: {
-            title,
-            content,
-            featureImage,
-            slug: kebabCase(title),
-          },
-        })
-      } catch (error) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.code === "P2002"
-        ) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" })
-        }
-      }
-    }),
-
-  updateTitle: adminProcedure
-    .input(z.object({ id: z.string().min(1), title: z.string().min(1) }))
-    .mutation(async ({ ctx, input: { id, title } }) => {
-      const newSlug = kebabCase(title)
-      try {
-        const post = await ctx.db.post.update({
-          where: {
-            id,
-          },
-          data: {
-            title,
-            slug: newSlug,
-          },
-        })
-        return post
-      } catch (error) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.code === "P2002"
-        ) {
-          throw new TRPCError({
-            code: "CONFLICT",
-            cause: "Title already exists",
+    .mutation(
+      async ({ ctx, input: { id, title, content, featureImage, tagId } }) => {
+        try {
+          return ctx.db.post.update({
+            where: {
+              id,
+            },
+            data: {
+              title,
+              content,
+              featureImage,
+              slug: kebabCase(title),
+              postTagId: tagId,
+            },
           })
+        } catch (error) {
+          if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2002"
+          ) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Post not found",
+            })
+          }
         }
-      }
-    }),
+      },
+    ),
 
   getAll: publicProcedure
     .input(z.object({ type: z.enum(["work", "writing"]) }))
     .query(async ({ ctx, input: { type } }) => {
       if (ctx.session?.user.isAdmin) {
-        return ctx.db.post.findMany({ where: { type } })
+        return ctx.db.post.findMany({
+          where: { type },
+          include: { postTag: true },
+        })
       } else {
-        return ctx.db.post.findMany({ where: { type, published: true } })
+        return ctx.db.post.findMany({
+          where: { type, published: true },
+          include: { postTag: true },
+        })
       }
     }),
 
@@ -129,6 +116,56 @@ export const postRouter = createTRPCRouter({
         return post
       }
       throw new TRPCError({ code: "NOT_FOUND", cause: "Post not found" })
+    }),
+
+  getTags: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.postTag.findMany()
+  }),
+
+  createTag: adminProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input: { name } }) => {
+      try {
+        return ctx.db.postTag.create({
+          data: {
+            name,
+          },
+        })
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === "P2002") {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "Tag already exists",
+            })
+          }
+        }
+      }
+    }),
+
+  deleteTag: adminProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input: { id } }) => {
+      try {
+        return ctx.db.postTag.delete({ where: { id } })
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === "P2002") {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Tag not found",
+            })
+          }
+        }
+      }
     }),
 
   delete: adminProcedure

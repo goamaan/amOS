@@ -20,6 +20,14 @@ import {
 } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select"
+import { Spinner } from "~/components/ui/spinner"
 import { UploadButton } from "~/lib/utils"
 import { api } from "~/trpc/react"
 
@@ -32,6 +40,7 @@ const formSchema = z.object({
     .max(50, {
       message: "Title must be less than 50 characters.",
     }),
+  tagId: z.string().min(1),
 })
 
 export function PostEditor({ post }: { post: Post }) {
@@ -40,12 +49,14 @@ export function PostEditor({ post }: { post: Post }) {
     post.featureImage ?? undefined,
   )
   const { mutateAsync } = api.post.update.useMutation()
+  const { data: tags, isFetching } = api.post.getTags.useQuery()
   const router = useRouter()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: post.title,
+      tagId: post.postTagId ?? "",
     },
   })
 
@@ -68,6 +79,34 @@ export function PostEditor({ post }: { post: Post }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="tagId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tag</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a tag for this post" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {isFetching ? (
+                    <Spinner />
+                  ) : (
+                    tags?.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.name}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="title"

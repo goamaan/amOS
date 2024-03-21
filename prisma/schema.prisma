@@ -142,7 +142,16 @@ model Post {
     reactions    Reaction[]
     userId       String
 
+    postTag   PostTag @relation(fields: [postTagId], references: [id])
+    postTagId String
+
     @@index([publishedAt])
+}
+
+model PostTag {
+    id    String @id @default(cuid())
+    name  String @unique
+    posts Post[]
 }
 
 model Stack {

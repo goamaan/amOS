@@ -16,6 +16,14 @@ import {
   FormMessage,
 } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select"
+import { Spinner } from "~/components/ui/spinner"
 import { api } from "~/trpc/react"
 
 const formSchema = z.object({
@@ -25,6 +33,7 @@ const formSchema = z.object({
       message: "Title must be at least 2 characters.",
     })
     .max(50),
+  tagId: z.string().min(1),
 })
 
 export function AddPostForm({ type }: { type: "writing" | "work" }) {
@@ -34,6 +43,7 @@ export function AddPostForm({ type }: { type: "writing" | "work" }) {
       title: "",
     },
   })
+  const { data: tags, isFetching } = api.post.getTags.useQuery()
 
   const router = useRouter()
 
@@ -41,7 +51,7 @@ export function AddPostForm({ type }: { type: "writing" | "work" }) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     return mutateAsync(
-      { title: values.title, type },
+      { title: values.title, type, tagId: values.tagId },
       {
         onError(error) {
           toast.error(error.message)
@@ -57,7 +67,35 @@ export function AddPostForm({ type }: { type: "writing" | "work" }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="tagId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tag</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a tag for this post" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {isFetching ? (
+                    <Spinner />
+                  ) : (
+                    tags?.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.name}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="title"

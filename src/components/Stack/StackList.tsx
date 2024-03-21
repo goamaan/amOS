@@ -1,4 +1,4 @@
-import { type Stack } from "@prisma/client"
+import { type StackTag, type Stack } from "@prisma/client"
 import { Plus, Tag } from "lucide-react"
 import { type Session } from "next-auth"
 import Image from "next/image"
@@ -7,6 +7,7 @@ import { ListContainer } from "~/components/ListContainer"
 import { AddStackForm } from "~/components/Stack/AddStack"
 import { StackTags } from "~/components/Stack/StackTags"
 import { TitleBar } from "~/components/TitleBar"
+import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button"
 import {
   Dialog,
@@ -59,7 +60,7 @@ export async function StackList({
 }: {
   params: { slug: string }
   user?: Session["user"]
-  stacks: Stack[]
+  stacks: (Stack & { tag: StackTag })[]
 }) {
   return (
     <ListContainer>
@@ -82,16 +83,23 @@ export async function StackList({
             <Link key={p.id} href={`/stack/${p.slug}`} className="w-full">
               <Button
                 variant={active ? "secondary" : "ghost"}
-                className="flex w-full items-center justify-start gap-2 py-7"
+                className="flex w-full items-center justify-between gap-2 py-7"
               >
-                <Image
-                  width={40}
-                  height={40}
-                  className="rounded"
-                  alt="stack item image"
-                  src={p.image}
-                />
-                <p className="">{p.name}</p>
+                <div className="flex gap-2">
+                  <Image
+                    width={40}
+                    height={40}
+                    className="rounded"
+                    alt="stack item image"
+                    src={p.image}
+                  />
+                  <div className="flex flex-col items-start justify-start">
+                    <p>{p.name}</p>
+                  </div>
+                </div>
+                <Badge className="flex items-center gap-1 self-start text-xs">
+                  <Tag size={12} /> {p.tag.name}
+                </Badge>
               </Button>
             </Link>
           )

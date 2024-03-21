@@ -29,7 +29,7 @@ export const stackRouter = createTRPCRouter({
   }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.stack.findMany()
+    return ctx.db.stack.findMany({ include: { tag: true } })
   }),
 
   createTag: adminProcedure

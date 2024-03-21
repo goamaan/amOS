@@ -75,7 +75,7 @@ export function TitleBar({
                 </h2>
               </div>
             ) : (
-              <h2 className="line-clamp-1 transform-gpu text-sm text-secondary-foreground">
+              <h2 className="line-clamp-1 transform-gpu text-sm font-medium text-secondary-foreground">
                 {title}
               </h2>
             )}

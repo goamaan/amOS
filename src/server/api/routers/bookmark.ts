@@ -27,7 +27,7 @@ export const bookmarkRouter = createTRPCRouter({
   }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.bookmark.findMany()
+    return ctx.db.bookmark.findMany({ include: { tag: true } })
   }),
 
   createTag: adminProcedure

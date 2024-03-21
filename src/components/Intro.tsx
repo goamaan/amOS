@@ -35,7 +35,7 @@ function TableRow({ href, title, subtitle, date }: TableRowProps) {
       href={href}
       className="group flex items-center space-x-4"
     >
-      <strong className="text-gray-1000 flex-none font-medium group-hover:text-blue-600 group-hover:underline dark:text-gray-100 dark:group-hover:text-blue-500">
+      <strong className="text-gray-1000 flex-none font-medium group-hover:text-cyan-400 group-hover:underline dark:text-gray-100 dark:group-hover:text-cyan-500">
         {title}
       </strong>
       <span className="w-full shrink border-t border-dashed border-gray-300 dark:border-gray-800" />
