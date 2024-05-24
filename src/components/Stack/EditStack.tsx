@@ -67,7 +67,7 @@ export function EditStackForm({ stack }: { stack: Stack }) {
 
   const router = useRouter()
 
-  const { mutateAsync } = api.stack.create.useMutation()
+  const { mutateAsync } = api.stack.update.useMutation()
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!image) {
@@ -76,7 +76,7 @@ export function EditStackForm({ stack }: { stack: Stack }) {
     }
 
     return mutateAsync(
-      { ...values, image },
+      { ...values, image, id: stack.id },
       {
         onError(error) {
           toast.error(error.message)
@@ -84,7 +84,7 @@ export function EditStackForm({ stack }: { stack: Stack }) {
         onSuccess(data) {
           toast.success("Stack item updated")
           router.refresh()
-          router.push(`/stack/${data?.id}`)
+          router.push(`/stack/${data?.slug}`)
         },
       },
     )
