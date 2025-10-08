@@ -195,7 +195,7 @@ export const commentRouter = createTRPCRouter({
       if (!comment) {
         throw new TRPCError({ code: "NOT_FOUND", cause: "Comment not found" })
       }
-      if (comment.userId !== ctx.session.user.id) {
+      if (comment.userId !== ctx.session.user.id && !ctx.session.user.isAdmin) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           cause: "You are not the author of this comment",
